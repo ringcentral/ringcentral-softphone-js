@@ -1,11 +1,13 @@
-const MD5 = require('crypto-js/md5')
+var crypto = require('crypto')
 const DOMParser = require('xmldom').DOMParser
 const R = require('ramda')
 
+const md5 = str => crypto.createHash('md5').update(str).digest('hex')
+
 const generateResponse = (username, password, realm, method, uri, nonce) => {
-  const ha1 = MD5(username + ':' + realm + ':' + password)
-  const ha2 = MD5(method + ':' + uri)
-  const response = MD5(ha1 + ':' + nonce + ':' + ha2)
+  const ha1 = md5(username + ':' + realm + ':' + password)
+  const ha2 = md5(method + ':' + uri)
+  const response = md5(ha1 + ':' + nonce + ':' + ha2)
   return response
 }
 
