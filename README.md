@@ -39,7 +39,7 @@ play -b 16 -e signed -c 1 -r 48000 temp.raw
 If `play` command is not available, please install `sox`: `brew install sox`.
 
 
-## What's the difference between ringcentral-web-phone and this project?
+## What are the differences between ringcentral-web-phone and this project?
 
 [ringcentral-web-phone](https://github.com/ringcentral/ringcentral-web-phone) is designed for client side and only works with browsers.
 
