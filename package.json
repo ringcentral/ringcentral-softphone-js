@@ -1,0 +1,9 @@
+{
+  "name": "ringcentral-softphone",
+  "version": "0.1.0",
+  "license": "MIT",
+  "devDependencies": {
+    "standard": "^14.2.0",
+    "yarn-upgrade-all": "^0.5.2"
+  }
+}
