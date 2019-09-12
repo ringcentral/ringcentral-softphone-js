@@ -11,11 +11,11 @@ const generateResponse = (username, password, realm, method, uri, nonce) => {
 
 /*
 Sample input:
-  const username = '802398776016'
-  const password = 'zMT7PPA1g'
+  const username = '802396666666'
+  const password = 'xxxxx'
   const realm = 'sip.ringcentral.com'
   const method = 'REGISTER'
-  const nonce = 'XXLbhV1y2lkhAnSTneLbX2xtVQbQIunG'
+  const nonce = 'yyyyyyy'
 */
 const generateAuthorization = (sipInfo, method, nonce) => {
   const { authorizationId: username, password, domain: realm } = sipInfo
@@ -23,7 +23,7 @@ const generateAuthorization = (sipInfo, method, nonce) => {
 }
 
 /*
-Proxy-Authorization: Digest algorithm=MD5, username="802398776016", realm="sip.ringcentral.com", nonce="XXVoNV11ZwleXD6JQCOPSV8StAHvrEYo", uri="sip:+16504306662@sip.ringcentral.com", response="baefc2cb1dd11d5e82726b773385f7b4"
+Proxy-Authorization: Digest algorithm=MD5, username="802396666666", realm="sip.ringcentral.com", nonce="yyyyyyy", uri="sip:+16508888888@sip.ringcentral.com", response="zzzzzzzzz"
 */
 const generateProxyAuthorization = (sipInfo, method, targetUser, nonce) => {
   const { authorizationId: username, password, domain: realm } = sipInfo
@@ -31,7 +31,7 @@ const generateProxyAuthorization = (sipInfo, method, targetUser, nonce) => {
 }
 
 /*
-P-rc: <Msg><Hdr SID="35461544856848" Req="{8BB0E158-AD7E-4EB5-A51A-2AE4193E9003}" From="#1092016@sip.ringcentral.com:5060" To="17203861294*115" Cmd="6"/><Bdy SrvLvl="-149699523" SrvLvlExt="406" Phn="+16504306662" Nm="WIRELESS CALLER" ToPhn="+16504223279" ToNm="Tyler Liu" RecUrl=""/></Msg>
+P-rc: <Msg><Hdr SID="35461545555555" Req="{8BB0E158-AD7E-4EB5-A51A-2AE4193E9003}" From="#1092222@sip.ringcentral.com:5060" To="17208888888*115" Cmd="6"/><Bdy SrvLvl="-149694444" SrvLvlExt="406" Phn="+16506666666" Nm="WIRELESS CALLER" ToPhn="+16508888888" ToNm="Tyler Liu" RecUrl=""/></Msg>
 */
 const parseRcMessage = str => {
   if (str.startsWith('P-rc: ')) {
