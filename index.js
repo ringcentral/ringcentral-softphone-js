@@ -1,9 +1,8 @@
+const RingCentral = require('@ringcentral/sdk').SDK
 const WS = require('ws')
 const uuid = require('uuid/v4')
-const { RTCSessionDescription, RTCPeerConnection } = require('wrtc')
-const { RTCAudioSink } = require('wrtc').nonstandard
+const { RTCSessionDescription, RTCPeerConnection, nonstandard: { RTCAudioSink } } = require('wrtc')
 const fs = require('fs')
-const RingCentral = require('@ringcentral/sdk').SDK
 
 const { generateAuthorization, parseRcMessage, rcMessageToXml, parseSipHeaders, addHeader } = require('./utils')
 
