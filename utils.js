@@ -1,6 +1,5 @@
-var crypto = require('crypto')
+const crypto = require('crypto')
 const DOMParser = require('xmldom').DOMParser
-const R = require('ramda')
 
 const md5 = str => crypto.createHash('md5').update(str).digest('hex')
 
@@ -62,7 +61,7 @@ const rcMessageToXml = Msg => {
 
 const parseSipHeaders = sipMessage => {
   const headersStr = sipMessage.split('\r\n\r\n')[0]
-  return R.fromPairs(headersStr.split('\r\n').filter(line => line.includes(': ')).map(line => line.trim().split(': ')))
+  return Object.fromEntries(headersStr.split('\r\n').filter(line => line.includes(': ')).map(line => line.trim().split(': ')))
 }
 
 module.exports = {
