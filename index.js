@@ -158,7 +158,11 @@ const inviteHandler = async (event) => {
     rtcpc.addEventListener('track', e => {
       const audioSink = new RTCAudioSink(e.track)
 
-      const stream = fs.createWriteStream('temp.raw', { flags: 'a' })
+      const audioPath = 'audio.raw'
+      if (fs.existsSync(audioPath)) {
+        fs.unlinkSync(audioPath)
+      }
+      const stream = fs.createWriteStream(audioPath, { flags: 'a' })
       audioSink.ondata = data => {
         stream.write(Buffer.from(data.samples.buffer))
       }
