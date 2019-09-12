@@ -1,10 +1,10 @@
-const RingCentral = require('ringcentral-js-concise').default
 const WS = require('ws')
 const uuid = require('uuid/v4')
 const R = require('ramda')
 const { RTCSessionDescription, RTCPeerConnection } = require('wrtc')
 const { RTCAudioSink } = require('wrtc').nonstandard
 const fs = require('fs')
+const RingCentral = require('@ringcentral/sdk').SDK
 
 const { generateAuthorization, parseRcMessage, rcMessageToXml, parseSipHeaders } = require('./utils')
 
@@ -211,14 +211,14 @@ const takeOverHandler = event => {
   }
 }
 
-const rc = new RingCentral(
-  process.env.RINGCENTRAL_CLIENT_ID,
-  process.env.RINGCENTRAL_CLIENT_SECRET,
-  process.env.RINGCENTRAL_SERVER_URL
-)
+const rc = new RingCentral({
+  server: process.env.RINGCENTRAL_SERVER_URL,
+  clientId: process.env.RINGCENTRAL_CLIENT_ID,
+  clientSecret: process.env.RINGCENTRAL_CLIENT_SECRET
+})
 
 ;(async () => {
-  await rc.authorize({
+  await rc.login({
     username: process.env.RINGCENTRAL_USERNAME,
     extension: process.env.RINGCENTRAL_EXTENSION,
     password: process.env.RINGCENTRAL_PASSWORD
@@ -226,8 +226,9 @@ const rc = new RingCentral(
   const r = await rc.post('/restapi/v1.0/client-info/sip-provision', {
     sipInfo: [{ transport: 'WSS' }]
   })
-  await rc.revoke()
-  sipInfo = r.data.sipInfo[0]
+  await rc.logout()
+  const json = await r.json()
+  sipInfo = json.sipInfo[0]
   ws = new WS('wss://' + sipInfo.outboundProxy, 'sip')
   ws.addEventListener('open', openHandler)
 
