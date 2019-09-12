@@ -64,10 +64,15 @@ const parseSipHeaders = sipMessage => {
   return Object.fromEntries(headersStr.split('\r\n').filter(line => line.includes(': ')).map(line => line.trim().split(': ')))
 }
 
+const addHeader = (headerLine, lines) => {
+  return [lines[0], headerLine, ...lines.slice(1)]
+}
+
 module.exports = {
   generateAuthorization,
   generateProxyAuthorization,
   parseRcMessage,
   rcMessageToXml,
-  parseSipHeaders
+  parseSipHeaders,
+  addHeader
 }

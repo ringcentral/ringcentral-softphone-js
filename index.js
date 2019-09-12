@@ -1,12 +1,11 @@
 const WS = require('ws')
 const uuid = require('uuid/v4')
-const R = require('ramda')
 const { RTCSessionDescription, RTCPeerConnection } = require('wrtc')
 const { RTCAudioSink } = require('wrtc').nonstandard
 const fs = require('fs')
 const RingCentral = require('@ringcentral/sdk').SDK
 
-const { generateAuthorization, parseRcMessage, rcMessageToXml, parseSipHeaders } = require('./utils')
+const { generateAuthorization, parseRcMessage, rcMessageToXml, parseSipHeaders, addHeader } = require('./utils')
 
 const fakeDomain = uuid() + '.invalid'
 const fakeEmail = uuid() + '@' + fakeDomain
@@ -24,9 +23,9 @@ const send = async (lines, method) => {
   return new Promise((resolve, reject) => {
     const seq = cseq++
     const seqLine = `CSeq: ${seq} ${method}`
-    lines = R.insert(1, seqLine, lines)
-    lines = R.insert(1, 'Max-Forwards: 70', lines)
-    lines = R.insert(1, 'User-Agent: SoftphoneTest/1.0.0', lines)
+    lines = addHeader(seqLine, lines)
+    lines = addHeader('Max-Forwards: 70', lines)
+    lines = addHeader('User-Agent: SoftphoneTest/1.0.0', lines)
     const message = lines.join('\r\n')
     const messageHandler = event => {
       const data = event.data
@@ -48,11 +47,11 @@ const answer = (offerHeaders, lines) => {
   const sameHeaders = ['Via', 'From', 'Call-ID', 'CSeq']
   for (const header of sameHeaders) {
     if (offerHeaders[header]) {
-      lines = R.insert(1, `${header}: ${offerHeaders[header]}`, lines)
+      lines = addHeader(`${header}: ${offerHeaders[header]}`, lines)
     }
   }
-  lines = R.insert(1, 'Supported: outbound', lines)
-  lines = R.insert(1, 'User-Agent: SoftphoneTest/1.0.0', lines)
+  lines = addHeader('Supported: outbound', lines)
+  lines = addHeader('User-Agent: SoftphoneTest/1.0.0', lines)
   const message = lines.join('\r\n')
   ws.send(message)
 }
@@ -77,7 +76,7 @@ const openHandler = async (event) => {
   let data = await send(registerLines, 'REGISTER')
   if (data.includes(', nonce="')) { // authorization required
     const nonce = data.match(/, nonce="(.+?)"/)[1]
-    data = await send(R.insert(1, generateAuthorization(sipInfo, 'REGISTER', nonce), registerLines), 'REGISTER')
+    data = await send(addHeader(generateAuthorization(sipInfo, 'REGISTER', nonce), registerLines), 'REGISTER')
     if (data.startsWith('SIP/2.0 200 OK')) { // register successful
       ws.addEventListener('message', inviteHandler)
     }

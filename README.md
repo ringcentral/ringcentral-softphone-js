@@ -70,4 +70,3 @@ Show the text to the caller and/or callee so they can see live transcription.
 
 - state machine
 - make outbound call
-- get rid of Ramda
