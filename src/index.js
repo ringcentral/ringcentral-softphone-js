@@ -1,10 +1,13 @@
-const RingCentral = require('@ringcentral/sdk').SDK
-const WS = require('ws')
-const uuid = require('uuid/v4')
-const { RTCSessionDescription, RTCPeerConnection, nonstandard: { RTCAudioSink } } = require('wrtc')
-const fs = require('fs')
+import WS from 'ws'
+import uuid from 'uuid/v4'
+import fs from 'fs'
+import { SDK } from '@ringcentral/sdk'
+import { RTCSessionDescription, RTCPeerConnection, nonstandard } from 'wrtc'
 
-const { generateAuthorization, parseRcMessage, rcMessageToXml, parseSipHeaders, addHeader } = require('./utils')
+import { generateAuthorization, parseRcMessage, rcMessageToXml, parseSipHeaders, addHeader } from './utils'
+
+const RingCentral = SDK
+const RTCAudioSink = nonstandard.RTCAudioSink
 
 const fakeDomain = uuid() + '.invalid'
 const fakeEmail = uuid() + '@' + fakeDomain
