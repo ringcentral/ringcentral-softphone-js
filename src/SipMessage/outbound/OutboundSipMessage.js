@@ -1,4 +1,4 @@
-import SipMessage from './SipMessage'
+import SipMessage from '../SipMessage'
 
 class OutboundSipMessage extends SipMessage {
   toString () {

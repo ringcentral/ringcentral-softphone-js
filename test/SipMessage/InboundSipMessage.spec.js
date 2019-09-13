@@ -1,7 +1,7 @@
 /* eslint-env jest */
-import SipMessage from '../../src/SipMessage/SipMessage'
+import InboundSipMessage from '../../src/SipMessage/inbound/InboundSipMessage'
 
-describe('SipMessage', () => {
+describe('InboundSipMessage', () => {
   test('Trying', async () => {
     const tryingString = `SIP/2.0 100 Trying
 Via: SIP/2.0/WSS d798d849-0447-4b28-ad5e-008889cfaabc.invalid;branch=z9hG4bK34f246ae-c6ca-417f-8a73-3a518309b2be
@@ -12,7 +12,7 @@ CSeq: 8016 REGISTER
 Content-Length: 0
 
 `.split('\n').join('\r\n')
-    const sipMessage = SipMessage.fromString(tryingString)
+    const sipMessage = InboundSipMessage.fromString(tryingString)
     expect(sipMessage.subject).toBe('SIP/2.0 100 Trying')
     expect(sipMessage.headers).toEqual({
       Via: 'SIP/2.0/WSS d798d849-0447-4b28-ad5e-008889cfaabc.invalid;branch=z9hG4bK34f246ae-c6ca-417f-8a73-3a518309b2be',
@@ -37,7 +37,7 @@ Content-Length: 0
 Www-Authenticate: Digest realm="sip.ringcentral.com", nonce="XXvrW1176i9sn4clcQVdEk6ezAYxEy/P"
 
 `.split('\n').join('\r\n')
-    const sipMessage = SipMessage.fromString(tryingString)
+    const sipMessage = InboundSipMessage.fromString(tryingString)
 
     expect(sipMessage.subject).toBe('SIP/2.0 401 Unauthorized')
     expect(sipMessage.headers).toEqual({
@@ -65,7 +65,7 @@ Content-Length: 0
 Contact: <sip:66c5fb5b-e78b-4bda-8799-97376028976e@a710736f-55c8-4a5b-8c6c-bae7993a4c0e.invalid;transport=ws>;expires=47
 
 `.split('\n').join('\r\n')
-    const sipMessage = SipMessage.fromString(tryingString)
+    const sipMessage = InboundSipMessage.fromString(tryingString)
     expect(sipMessage.subject).toBe('SIP/2.0 200 OK')
     expect(sipMessage.headers).toEqual({
       Via: 'SIP/2.0/WSS a710736f-55c8-4a5b-8c6c-bae7993a4c0e.invalid;branch=z9hG4bK5354601a-c6f9-44e0-900b-dc33c2bb1194',
@@ -128,7 +128,7 @@ a=ice-pwd:QTEEF1lt81VyKvJvEHhabIh9JZ
 a=candidate:Mjq5KtrBWhOTFixu 1 UDP 2130706431 104.245.57.182 29768 typ host
 a=candidate:Mjq5KtrBWhOTFixu 2 UDP 2130706430 104.245.57.182 29769 typ host
 `.split('\n').join('\r\n')
-    const sipMessage = SipMessage.fromString(tryingString)
+    const sipMessage = InboundSipMessage.fromString(tryingString)
     expect(sipMessage.subject).toBe('INVITE sip:4a4d40b5-247c-4330-bf09-2395bdf0337e@604faea0-3b32-476c-8271-9e58e1f96448.invalid;transport=ws SIP/2.0')
     expect(sipMessage.headers).toEqual({
       Via: 'SIP/2.0/WSS 104.245.57.165:8083;rport;branch=z9hG4bK305I2S-2qHqTu',
@@ -192,7 +192,7 @@ Content-Length: 200
 Content-Type: x-rc/agent
 
 <Msg><Hdr SID="35464243582848" Req="" From="#1024016@sip.ringcentral.com:5060" To="17206666666*115@sip.ringcentral.com:5060" Cmd="7"/><Bdy Cln="802398808016" IP="4294967295" Sts="0" CtrlCln=""/></Msg>`.split('\n').join('\r\n')
-    const sipMessage = SipMessage.fromString(tryingString)
+    const sipMessage = InboundSipMessage.fromString(tryingString)
     expect(sipMessage.subject).toBe('MESSAGE sip:f234d4ad-aa84-4953-b7fe-475829102b56@f653434b-7cfa-4bc4-ba5a-52fb637395d1.invalid;transport=ws SIP/2.0')
     expect(sipMessage.headers).toEqual({
       Via: 'SIP/2.0/WSS 104.245.57.165:8083;rport;branch=z9hG4bK3DmKRO-atQnvs',

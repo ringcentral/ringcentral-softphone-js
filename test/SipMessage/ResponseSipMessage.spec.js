@@ -1,9 +1,9 @@
 /* eslint-env jest */
-import ResponseSipMessage from '../../src/SipMessage/ResponseSipMessage'
+import ResponseSipMessage from '../../src/SipMessage/outbound/ResponseSipMessage'
 
 describe('ResponseSipMessage', () => {
   test('Trying', async () => {
-    const responseSipMessage = new ResponseSipMessage('SIP/2.0 100 Trying', {
+    const sipMessage = new ResponseSipMessage('SIP/2.0 100 Trying', {
       'User-Agent': 'SoftphoneTest/1.0.0',
       Supported: 'outbound',
       CSeq: '218461177 INVITE',
@@ -12,7 +12,7 @@ describe('ResponseSipMessage', () => {
       Via: 'SIP/2.0/WSS 104.245.57.183:8083;rport;branch=z9hG4bK2YLFDF-4Cfcnb',
       To: '"WIRELESS CALLER" <sip:17206666666*115@50.237.72.154>'
     }, '')
-    expect(responseSipMessage.toString()).toBe(`SIP/2.0 100 Trying
+    expect(sipMessage.toString()).toBe(`SIP/2.0 100 Trying
 User-Agent: SoftphoneTest/1.0.0
 Supported: outbound
 CSeq: 218461177 INVITE
@@ -26,7 +26,7 @@ Content-Length: 0
   })
 
   test('Ringing', async () => {
-    const responseSipMessage = new ResponseSipMessage('SIP/2.0 180 Ringing', {
+    const sipMessage = new ResponseSipMessage('SIP/2.0 180 Ringing', {
       'User-Agent': 'SoftphoneTest/1.0.0',
       Supported: 'outbound',
       CSeq: '218424460 INVITE',
@@ -36,7 +36,7 @@ Content-Length: 0
       To: '"WIRELESS CALLER" <sip:17206666666*115@50.237.72.154>;tag=046ae66d-e535-48e0-937a-6a4bda72b2c4',
       Contact: '<sip:568cdf84-8199-4d9c-be39-255cf5fba974.invalid;transport=ws>'
     }, '')
-    expect(responseSipMessage.toString()).toBe(`SIP/2.0 180 Ringing
+    expect(sipMessage.toString()).toBe(`SIP/2.0 180 Ringing
 User-Agent: SoftphoneTest/1.0.0
 Supported: outbound
 CSeq: 218424460 INVITE
@@ -51,7 +51,7 @@ Content-Length: 0
   })
 
   test('OK', async () => {
-    const responseSipMessage = new ResponseSipMessage('SIP/2.0 200 OK', {
+    const sipMessage = new ResponseSipMessage('SIP/2.0 200 OK', {
       'User-Agent': 'SoftphoneTest/1.0.0',
       Supported: 'outbound',
       CSeq: '218557048 MESSAGE',
@@ -60,7 +60,7 @@ Content-Length: 0
       Via: 'SIP/2.0/WSS 104.245.57.165:8083;rport;branch=z9hG4bKaTt1kM-3U7roB',
       To: '<sip:17206666666*115@sip.ringcentral.com>;tag=db3e8b0a-28bb-48e2-852d-371579c9b707'
     }, '')
-    expect(responseSipMessage.toString()).toBe(`SIP/2.0 200 OK
+    expect(sipMessage.toString()).toBe(`SIP/2.0 200 OK
 User-Agent: SoftphoneTest/1.0.0
 Supported: outbound
 CSeq: 218557048 MESSAGE
@@ -74,7 +74,7 @@ Content-Length: 0
   })
 
   test('INVITE response', () => {
-    const responseSipMessage = new ResponseSipMessage('SIP/2.0 200 OK', {
+    const sipMessage = new ResponseSipMessage('SIP/2.0 200 OK', {
       'User-Agent': 'SoftphoneTest/1.0.0',
       Supported: 'outbound',
       CSeq: '218557040 INVITE',
@@ -112,7 +112,7 @@ a=rtpmap:96 ilbc/8000
 a=rtpmap:101 telephone-event/8000
 `.split('\n').join('\r\n'))
 
-    expect(responseSipMessage.toString()).toBe(`SIP/2.0 200 OK
+    expect(sipMessage.toString()).toBe(`SIP/2.0 200 OK
 User-Agent: SoftphoneTest/1.0.0
 Supported: outbound
 CSeq: 218557040 INVITE
