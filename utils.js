@@ -38,19 +38,15 @@ const parseRcMessage = str => {
   if (str.startsWith('P-rc: ')) {
     str = str.substring(6)
   }
-  const parser = new DOMParser()
-  const xmlDoc = parser.parseFromString(str, 'text/xml')
-  const hdrNode = xmlDoc.getElementsByTagName('Hdr')[0]
-  const bdyNode = xmlDoc.getElementsByTagName('Bdy')[0]
-
-  const Msg = { Hdr: {}, Bdy: {} }
-  for (let i = 0; i < hdrNode.attributes.length; i++) {
-    const attr = hdrNode.attributes[i]
-    Msg.Hdr[attr.nodeName] = attr.nodeValue
-  }
-  for (let i = 0; i < bdyNode.attributes.length; i++) {
-    const attr = bdyNode.attributes[i]
-    Msg.Bdy[attr.nodeName] = attr.nodeValue
+  const xmlDoc = new DOMParser().parseFromString(str, 'text/xml')
+  const Msg = {}
+  for (const tag of ['Hdr', 'Bdy']) {
+    Msg[tag] = {}
+    const element = xmlDoc.getElementsByTagName(tag)[0]
+    for (let i = 0; i < element.attributes.length; i++) {
+      const attr = element.attributes[i]
+      Msg[tag][attr.nodeName] = attr.nodeValue
+    }
   }
   return Msg
 }
