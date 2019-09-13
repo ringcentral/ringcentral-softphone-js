@@ -1,6 +1,6 @@
 import SipMessage from './SipMessage'
 
-class SipRequestMessage extends SipMessage {
+class OutboundSipMessage extends SipMessage {
   toString () {
     if (!this.headers['Content-Length']) {
       this.headers['Content-Length'] = this.body.length
@@ -9,4 +9,4 @@ class SipRequestMessage extends SipMessage {
   }
 }
 
-export default SipRequestMessage
+export default OutboundSipMessage

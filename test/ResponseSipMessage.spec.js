@@ -1,9 +1,9 @@
 /* eslint-env jest */
-import SipRequestMessage from '../src/SipRequestMessage'
+import ResponseSipMessage from '../src/ResponseSipMessage'
 
-describe('SipRequestMessage', () => {
+describe('ResponseSipMessage', () => {
   test('Trying', async () => {
-    const sipRequestMessage = new SipRequestMessage('SIP/2.0 100 Trying', {
+    const responseSipMessage = new ResponseSipMessage('SIP/2.0 100 Trying', {
       'User-Agent': 'SoftphoneTest/1.0.0',
       Supported: 'outbound',
       CSeq: '218461177 INVITE',
@@ -12,8 +12,7 @@ describe('SipRequestMessage', () => {
       Via: 'SIP/2.0/WSS 104.245.57.183:8083;rport;branch=z9hG4bK2YLFDF-4Cfcnb',
       To: '"WIRELESS CALLER" <sip:17203861294*115@50.237.72.154>'
     }, '')
-
-    expect(sipRequestMessage.toString()).toBe(`SIP/2.0 100 Trying
+    expect(responseSipMessage.toString()).toBe(`SIP/2.0 100 Trying
 User-Agent: SoftphoneTest/1.0.0
 Supported: outbound
 CSeq: 218461177 INVITE
