@@ -13,10 +13,10 @@ const generateResponse = (username, password, realm, method, uri, nonce) => {
 /*
 Sample input:
   const username = '802396666666'
-  const password = 'xxxxx'
+  const password = 'xxxxxx'
   const realm = 'sip.ringcentral.com'
   const method = 'REGISTER'
-  const nonce = 'yyyyyyy'
+  const nonce = 'yyyyyy'
 */
 export const generateAuthorization = (sipInfo, method, nonce) => {
   const { authorizationId: username, password, domain: realm } = sipInfo
