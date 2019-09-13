@@ -201,7 +201,7 @@ Content-Type: x-rc/agent
       'Call-ID': '0037695cd4ec46dcb6da8e59edc1cfa9',
       CSeq: '218346883 MESSAGE',
       'Max-Forwards': '67',
-      'Content-Length': '200',
+      'Content-Length': sipMessage.body.length + '',
       'Content-Type': 'x-rc/agent'
     })
     expect(sipMessage.body).toBe('<Msg><Hdr SID="35464243582848" Req="" From="#1024016@sip.ringcentral.com:5060" To="17206666666*115@sip.ringcentral.com:5060" Cmd="7"/><Bdy Cln="802398808016" IP="4294967295" Sts="0" CtrlCln=""/></Msg>')
