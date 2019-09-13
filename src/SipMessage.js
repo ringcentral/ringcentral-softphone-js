@@ -14,6 +14,10 @@ class SipMessage {
     sipMessage.headers = Object.fromEntries(headers.map(line => line.split(': ')))
     return sipMessage
   }
+
+  toString () {
+    return [this.subject, ...Object.keys(this.headers).map(key => `${key}: ${this.headers[key]}`), '', this.body].join('\r\n')
+  }
 }
 
 export default SipMessage
