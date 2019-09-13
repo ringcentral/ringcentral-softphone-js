@@ -4,7 +4,8 @@ import fs from 'fs'
 import { SDK } from '@ringcentral/sdk'
 import { RTCSessionDescription, RTCPeerConnection, nonstandard } from 'wrtc'
 
-import { generateAuthorization, parseRcMessage, rcMessageToXml, parseSipHeaders, addHeader } from './utils'
+import { generateAuthorization, parseSipHeaders, addHeader } from './utils'
+import RcMessage from './RcMessage'
 
 const RingCentral = SDK
 const RTCAudioSink = nonstandard.RTCAudioSink
@@ -108,27 +109,27 @@ const inviteHandler = async (event) => {
     ])
 
     const sdp = 'v=0\r\n' + data.split('\r\nv=0\r\n')[1].trim() + '\r\n'
-    const Msg = parseRcMessage(offerHeaders['P-rc'])
-    const newMsg = {
-      Hdr: {
-        SID: Msg.Hdr.SID,
-        Req: Msg.Hdr.Req,
-        From: Msg.Hdr.To,
-        To: Msg.Hdr.From,
+    const rcMessage = RcMessage.fromXml(offerHeaders['P-rc'])
+    const newRcMessage = new RcMessage(
+      {
+        SID: rcMessage.Hdr.SID,
+        Req: rcMessage.Hdr.Req,
+        From: rcMessage.Hdr.To,
+        To: rcMessage.Hdr.From,
         Cmd: 17
       },
-      Bdy: {
+      {
         Cln: sipInfo.authorizationId
       }
-    }
-    const newMsgStr = rcMessageToXml(newMsg)
+    )
+    const newMsgStr = newRcMessage.toXml()
     // this is for 17: receiveConfirm
     // not sure why server side needs this
     await send([
-      `MESSAGE sip:${Msg.Hdr.From.replace('#', '%23')} SIP/2.0`,
+      `MESSAGE sip:${rcMessage.Hdr.From.replace('#', '%23')} SIP/2.0`,
       `Via: SIP/2.0/WSS ${fakeEmail};branch=${branch()}`,
-      `To: <sip:${Msg.Hdr.From.replace('#', '%23')}>`,
-      `From: <sip:${Msg.Hdr.To}@sip.ringcentral.com>;tag=${fromTag}`,
+      `To: <sip:${rcMessage.Hdr.From.replace('#', '%23')}>`,
+      `From: <sip:${rcMessage.Hdr.To}@sip.ringcentral.com>;tag=${fromTag}`,
       `Call-ID: ${callerId}`,
       'Content-Type: x-rc/agent',
       'Supported: outbound',
