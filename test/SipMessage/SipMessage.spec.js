@@ -1,5 +1,5 @@
 /* eslint-env jest */
-import SipMessage from '../src/SipMessage'
+import SipMessage from '../../src/SipMessage/SipMessage'
 
 describe('SipMessage', () => {
   test('Trying', async () => {

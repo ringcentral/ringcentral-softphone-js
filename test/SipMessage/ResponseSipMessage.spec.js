@@ -1,5 +1,5 @@
 /* eslint-env jest */
-import ResponseSipMessage from '../src/ResponseSipMessage'
+import ResponseSipMessage from '../../src/SipMessage/ResponseSipMessage'
 
 describe('ResponseSipMessage', () => {
   test('Trying', async () => {

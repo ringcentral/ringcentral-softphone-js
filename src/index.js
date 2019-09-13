@@ -143,18 +143,18 @@ const inviteHandler = async (event) => {
     const rtcpc = new RTCPeerConnection({ iceServers: [{ urls: 'stun:74.125.194.127:19302' }] })
 
     /* this is for debugging - start */
-    const eventNames = [
-      'addstream', 'connectionstatechange', 'datachannel', 'icecandidate',
-      'iceconnectionstatechange', 'icegatheringstatechange', 'identityresult',
-      'negotiationneeded', 'removestream', 'signalingstatechange', 'track'
-    ]
-    for (const eventName of eventNames) {
-      rtcpc.addEventListener(eventName, e => {
-        console.log(`\n****** RTCPeerConnection ${eventName} event - start *****`)
-        console.log(e)
-        console.log(`****** RTCPeerConnection ${eventName} event - end *****\n`)
-      })
-    }
+    // const eventNames = [
+    //   'addstream', 'connectionstatechange', 'datachannel', 'icecandidate',
+    //   'iceconnectionstatechange', 'icegatheringstatechange', 'identityresult',
+    //   'negotiationneeded', 'removestream', 'signalingstatechange', 'track'
+    // ]
+    // for (const eventName of eventNames) {
+    //   rtcpc.addEventListener(eventName, e => {
+    //     console.log(`\n****** RTCPeerConnection ${eventName} event - start *****`)
+    //     console.log(e)
+    //     console.log(`****** RTCPeerConnection ${eventName} event - end *****\n`)
+    //   })
+    // }
     /* this is for debugging - end */
 
     rtcpc.addEventListener('track', e => {
@@ -236,9 +236,9 @@ const rc = new RingCentral({
 
   /* this is for debugging - start */
   ws.addEventListener('message', event => {
-    console.log('\n***** WebSocket Got - start *****')
-    console.log(event.data)
-    console.log('***** WebSocket Got - end *****\n')
+    // console.log('\n***** WebSocket Got - start *****')
+    // console.log(event.data)
+    // console.log('***** WebSocket Got - end *****\n')
   })
   const send = ws.send.bind(ws)
   ws.send = (...args) => {
