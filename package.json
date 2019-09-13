@@ -3,7 +3,8 @@
   "version": "0.1.0",
   "license": "MIT",
   "scripts": {
-    "start": "node -r dotenv-override-true/config -r @babel/register src/index.js"
+    "start": "node -r dotenv-override-true/config -r @babel/register src/index.js",
+    "test": "standard && jest"
   },
   "dependencies": {
     "@ringcentral/sdk": "^4.0.0-alpha.7",
@@ -18,6 +19,7 @@
     "@babel/register": "^7.6.0",
     "core-js": "^3.2.1",
     "dotenv-override-true": "^6.2.0",
+    "jest": "^24.9.0",
     "standard": "^14.2.0",
     "yarn-upgrade-all": "^0.5.2"
   }
