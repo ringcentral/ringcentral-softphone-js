@@ -5,18 +5,18 @@ import { version } from '../../package.json'
 
 const inboundInviteMessage = InboundSipMessage.fromString(`INVITE sip:db228b2d-10a2-4a61-aeb1-3e5697c4348e@f00b012e-4b95-45dc-a530-27e04537b158.invalid;transport=ws SIP/2.0
 Via: SIP/2.0/WSS 104.245.57.165:8083;rport;branch=z9hG4bK1HlzGT-2WxVW2
-From: "WIRELESS CALLER" <sip:+16504306662@104.245.57.165>;tag=10.13.22.242-5070-26c2b3fce8a242
+From: "WIRELESS CALLER" <sip:+16506666666@104.245.57.165>;tag=10.13.22.242-5070-26c2b3fce8a242
 To: "WIRELESS CALLER" <sip:17203861294*115@50.237.72.154>
 Call-ID: 7661f03e2b374012b8cfe8e7f1442261
 CSeq: 218658393 INVITE
 Max-Forwards: 67
 Content-Length: 873
-Contact: <sip:+16504306662@104.245.57.165:8083;transport=wss>
+Contact: <sip:+16506666666@104.245.57.165:8083;transport=wss>
 Content-Type: application/sdp
 User-Agent: RC_SIPWRP_22.242
 p-rc-api-ids: party-id=p-e9d16ea3dabd47f59e40b1f92d8515f3-2;session-id=s-e9d16ea3dabd47f59e40b1f92d8515f3
 p-rc-api-call-info: callAttributes=reject,send-vm
-P-rc: <Msg><Hdr SID="35464295783848" Req="{4E1DBD96-9DA5-43FB-A8BD-3252938BF0C7}" From="#1000016@sip.ringcentral.com:5060" To="17203861294*115" Cmd="6"/><Bdy SrvLvl="-149699523" SrvLvlExt="406" Phn="+16504306662" Nm="WIRELESS CALLER" ToPhn="+16504223279" ToNm="Tyler Liu" RecUrl=""/></Msg>
+P-rc: <Msg><Hdr SID="35464295783848" Req="{4E1DBD96-9DA5-43FB-A8BD-3252938BF0C7}" From="#1000016@sip.ringcentral.com:5060" To="17203861294*115" Cmd="6"/><Bdy SrvLvl="-149699523" SrvLvlExt="406" Phn="+16506666666" Nm="WIRELESS CALLER" ToPhn="+16508888888" ToNm="Tyler Liu" RecUrl=""/></Msg>
 Call-Info: <906531240_133538243@10.13.116.50>;purpose=info
 
 v=0
@@ -62,7 +62,7 @@ describe('ResponseSipMessage', () => {
       Supported: 'outbound',
       CSeq: '218658393 INVITE',
       'Call-ID': '7661f03e2b374012b8cfe8e7f1442261',
-      From: '"WIRELESS CALLER" <sip:+16504306662@104.245.57.165>;tag=10.13.22.242-5070-26c2b3fce8a242',
+      From: '"WIRELESS CALLER" <sip:+16506666666@104.245.57.165>;tag=10.13.22.242-5070-26c2b3fce8a242',
       Via: 'SIP/2.0/WSS 104.245.57.165:8083;rport;branch=z9hG4bK1HlzGT-2WxVW2',
       To: '"WIRELESS CALLER" <sip:17203861294*115@50.237.72.154>',
       'Content-Length': 0
@@ -80,7 +80,7 @@ describe('ResponseSipMessage', () => {
       Supported: 'outbound',
       CSeq: '218658393 INVITE',
       'Call-ID': '7661f03e2b374012b8cfe8e7f1442261',
-      From: '"WIRELESS CALLER" <sip:+16504306662@104.245.57.165>;tag=10.13.22.242-5070-26c2b3fce8a242',
+      From: '"WIRELESS CALLER" <sip:+16506666666@104.245.57.165>;tag=10.13.22.242-5070-26c2b3fce8a242',
       Via: 'SIP/2.0/WSS 104.245.57.165:8083;rport;branch=z9hG4bK1HlzGT-2WxVW2',
       To: '"WIRELESS CALLER" <sip:17203861294*115@50.237.72.154>;tag=9bfeee30-dea5-4069-be7d-b43b8a14a05a',
       Contact: '<sip:f00b012e-4b95-45dc-a530-27e04537b158.invalid;transport=ws>',
