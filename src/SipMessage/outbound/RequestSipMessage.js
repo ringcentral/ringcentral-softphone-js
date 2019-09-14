@@ -1,11 +1,9 @@
 import OutboundSipMessage from './OutboundSipMessage'
 
 class RequestSipMessage extends OutboundSipMessage {
-  toString () {
-    if (!this.headers['Max-Forwards']) {
-      this.headers['Max-Forwards'] = 70
-    }
-    return super.toString()
+  constructor (subject, headers, body = '') {
+    super(subject, headers, body)
+    this.headers['Max-Forwards'] = 70
   }
 }
 

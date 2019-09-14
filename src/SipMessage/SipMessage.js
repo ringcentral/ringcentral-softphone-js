@@ -1,8 +1,8 @@
 class SipMessage {
-  constructor (subject, headers, body) {
+  constructor (subject, headers, body = '') {
     this.subject = subject
     this.headers = headers
-    this.body = body || ''
+    this.body = body
   }
 
   toString () {

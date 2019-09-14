@@ -1,155 +1,90 @@
 /* eslint-env jest */
 import ResponseSipMessage from '../../src/SipMessage/outbound/ResponseSipMessage'
+import InboundSipMessage from '../../src/SipMessage/inbound/InboundSipMessage'
+import { version } from '../../package.json'
+
+const inboundInviteMessage = InboundSipMessage.fromString(`INVITE sip:db228b2d-10a2-4a61-aeb1-3e5697c4348e@f00b012e-4b95-45dc-a530-27e04537b158.invalid;transport=ws SIP/2.0
+Via: SIP/2.0/WSS 104.245.57.165:8083;rport;branch=z9hG4bK1HlzGT-2WxVW2
+From: "WIRELESS CALLER" <sip:+16504306662@104.245.57.165>;tag=10.13.22.242-5070-26c2b3fce8a242
+To: "WIRELESS CALLER" <sip:17203861294*115@50.237.72.154>
+Call-ID: 7661f03e2b374012b8cfe8e7f1442261
+CSeq: 218658393 INVITE
+Max-Forwards: 67
+Content-Length: 873
+Contact: <sip:+16504306662@104.245.57.165:8083;transport=wss>
+Content-Type: application/sdp
+User-Agent: RC_SIPWRP_22.242
+p-rc-api-ids: party-id=p-e9d16ea3dabd47f59e40b1f92d8515f3-2;session-id=s-e9d16ea3dabd47f59e40b1f92d8515f3
+p-rc-api-call-info: callAttributes=reject,send-vm
+P-rc: <Msg><Hdr SID="35464295783848" Req="{4E1DBD96-9DA5-43FB-A8BD-3252938BF0C7}" From="#1000016@sip.ringcentral.com:5060" To="17203861294*115" Cmd="6"/><Bdy SrvLvl="-149699523" SrvLvlExt="406" Phn="+16504306662" Nm="WIRELESS CALLER" ToPhn="+16504223279" ToNm="Tyler Liu" RecUrl=""/></Msg>
+Call-Info: <906531240_133538243@10.13.116.50>;purpose=info
+
+v=0
+o=- 7028228953198384563 8403357933122626934 IN IP4 104.245.57.182
+s=SmcSip
+c=IN IP4 104.245.57.182
+t=0 0
+m=audio 37216 RTP/SAVPF 109 111 18 0 8 9 96 101
+a=rtpmap:109 OPUS/16000
+a=fmtp:109 useinbandfec=1
+a=rtcp-fb:109 ccm tmmbr
+a=rtpmap:111 OPUS/48000/2
+a=fmtp:111 useinbandfec=1
+a=rtcp-fb:111 ccm tmmbr
+a=rtpmap:18 g729/8000
+a=fmtp:18 annexb=no
+a=rtpmap:0 pcmu/8000
+a=rtpmap:8 pcma/8000
+a=rtpmap:9 g722/8000
+a=rtpmap:96 ilbc/8000
+a=fmtp:96 mode=20
+a=rtpmap:101 telephone-event/8000
+a=fmtp:101 0-15
+a=sendrecv
+a=rtcp:37217
+a=rtcp-mux
+a=setup:actpass
+a=fingerprint:sha-1 46:81:F7:FD:FB:15:4E:75:EC:6A:D1:4C:69:DA:21:EB:B3:B3:52:16
+a=ice-ufrag:r7cg0L7k
+a=ice-pwd:zUgXquxBbhEansWDjaVyQA3rmW
+a=candidate:mQ0FXtgcx3Jp54R9 1 UDP 2130706431 104.245.57.182 37216 typ host
+a=candidate:mQ0FXtgcx3Jp54R9 2 UDP 2130706430 104.245.57.182 37217 typ host
+`.split('\n').join('\r\n'))
 
 describe('ResponseSipMessage', () => {
   test('Trying', async () => {
-    const sipMessage = new ResponseSipMessage('SIP/2.0 100 Trying', {
-      'User-Agent': 'SoftphoneTest/1.0.0',
+    const sipMessage = new ResponseSipMessage(inboundInviteMessage, 100, 'Trying', {
+      To: inboundInviteMessage.headers.To
+    })
+    expect(sipMessage.subject).toBe('SIP/2.0 100 Trying')
+    expect(sipMessage.headers).toEqual({
+      'User-Agent': `ringcentral-softphone-js/${version}`,
       Supported: 'outbound',
-      CSeq: '218461177 INVITE',
-      'Call-ID': '5628d6b687a849cb826d7ac0259f0df9',
-      From: '"WIRELESS CALLER" <sip:+16506666666@104.245.57.183>;tag=10.13.121.70-5070-46867dec796244',
-      Via: 'SIP/2.0/WSS 104.245.57.183:8083;rport;branch=z9hG4bK2YLFDF-4Cfcnb',
-      To: '"WIRELESS CALLER" <sip:17206666666*115@50.237.72.154>'
-    }, '')
-    expect(sipMessage.toString()).toBe(`SIP/2.0 100 Trying
-User-Agent: SoftphoneTest/1.0.0
-Supported: outbound
-CSeq: 218461177 INVITE
-Call-ID: 5628d6b687a849cb826d7ac0259f0df9
-From: "WIRELESS CALLER" <sip:+16506666666@104.245.57.183>;tag=10.13.121.70-5070-46867dec796244
-Via: SIP/2.0/WSS 104.245.57.183:8083;rport;branch=z9hG4bK2YLFDF-4Cfcnb
-To: "WIRELESS CALLER" <sip:17206666666*115@50.237.72.154>
-Content-Length: 0
-
-`.split('\n').join('\r\n'))
+      CSeq: '218658393 INVITE',
+      'Call-ID': '7661f03e2b374012b8cfe8e7f1442261',
+      From: '"WIRELESS CALLER" <sip:+16504306662@104.245.57.165>;tag=10.13.22.242-5070-26c2b3fce8a242',
+      Via: 'SIP/2.0/WSS 104.245.57.165:8083;rport;branch=z9hG4bK1HlzGT-2WxVW2',
+      To: '"WIRELESS CALLER" <sip:17203861294*115@50.237.72.154>',
+      'Content-Length': 0
+    })
   })
 
   test('Ringing', async () => {
-    const sipMessage = new ResponseSipMessage('SIP/2.0 180 Ringing', {
-      'User-Agent': 'SoftphoneTest/1.0.0',
+    const sipMessage = new ResponseSipMessage(inboundInviteMessage, 180, 'Ringing', {
+      To: inboundInviteMessage.headers.To + ';tag=9bfeee30-dea5-4069-be7d-b43b8a14a05a',
+      Contact: '<sip:f00b012e-4b95-45dc-a530-27e04537b158.invalid;transport=ws>'
+    })
+    expect(sipMessage.subject).toBe('SIP/2.0 180 Ringing')
+    expect(sipMessage.headers).toEqual({
+      'User-Agent': `ringcentral-softphone-js/${version}`,
       Supported: 'outbound',
-      CSeq: '218424460 INVITE',
-      'Call-ID': '2e4fc664d44d470a9430b67d95c620cd',
-      From: '"WIRELESS CALLER" <sip:+16506666666@104.245.57.165>;tag=10.13.20.230-5070-f8266a70eaff44',
-      Via: 'SIP/2.0/WSS 104.245.57.165:8083;rport;branch=z9hG4bK2IenZ1-a9iUhd',
-      To: '"WIRELESS CALLER" <sip:17206666666*115@50.237.72.154>;tag=046ae66d-e535-48e0-937a-6a4bda72b2c4',
-      Contact: '<sip:568cdf84-8199-4d9c-be39-255cf5fba974.invalid;transport=ws>'
-    }, '')
-    expect(sipMessage.toString()).toBe(`SIP/2.0 180 Ringing
-User-Agent: SoftphoneTest/1.0.0
-Supported: outbound
-CSeq: 218424460 INVITE
-Call-ID: 2e4fc664d44d470a9430b67d95c620cd
-From: "WIRELESS CALLER" <sip:+16506666666@104.245.57.165>;tag=10.13.20.230-5070-f8266a70eaff44
-Via: SIP/2.0/WSS 104.245.57.165:8083;rport;branch=z9hG4bK2IenZ1-a9iUhd
-To: "WIRELESS CALLER" <sip:17206666666*115@50.237.72.154>;tag=046ae66d-e535-48e0-937a-6a4bda72b2c4
-Contact: <sip:568cdf84-8199-4d9c-be39-255cf5fba974.invalid;transport=ws>
-Content-Length: 0
-
-`.split('\n').join('\r\n'))
-  })
-
-  test('OK', async () => {
-    const sipMessage = new ResponseSipMessage('SIP/2.0 200 OK', {
-      'User-Agent': 'SoftphoneTest/1.0.0',
-      Supported: 'outbound',
-      CSeq: '218557048 MESSAGE',
-      'Call-ID': '8929584cbd7d4088a0b0821adcf0f088',
-      From: '<sip:%231028016@sip.ringcentral.com>;tag=a1b89c44b7aa4310b12cf029ca35539c',
-      Via: 'SIP/2.0/WSS 104.245.57.165:8083;rport;branch=z9hG4bKaTt1kM-3U7roB',
-      To: '<sip:17206666666*115@sip.ringcentral.com>;tag=db3e8b0a-28bb-48e2-852d-371579c9b707'
-    }, '')
-    expect(sipMessage.toString()).toBe(`SIP/2.0 200 OK
-User-Agent: SoftphoneTest/1.0.0
-Supported: outbound
-CSeq: 218557048 MESSAGE
-Call-ID: 8929584cbd7d4088a0b0821adcf0f088
-From: <sip:%231028016@sip.ringcentral.com>;tag=a1b89c44b7aa4310b12cf029ca35539c
-Via: SIP/2.0/WSS 104.245.57.165:8083;rport;branch=z9hG4bKaTt1kM-3U7roB
-To: <sip:17206666666*115@sip.ringcentral.com>;tag=db3e8b0a-28bb-48e2-852d-371579c9b707
-Content-Length: 0
-
-`.split('\n').join('\r\n'))
-  })
-
-  test('INVITE response', () => {
-    const sipMessage = new ResponseSipMessage('SIP/2.0 200 OK', {
-      'User-Agent': 'SoftphoneTest/1.0.0',
-      Supported: 'outbound',
-      CSeq: '218557040 INVITE',
-      'Call-ID': 'e6eaca5f7cb54701aa103e5b17d3d4bf',
-      From: '"WIRELESS CALLER" <sip:+16506666666@104.245.57.165>;tag=10.13.22.19-5070-c3e8b4c2377649d',
-      Via: 'SIP/2.0/WSS 104.245.57.165:8083;rport;branch=z9hG4bK3Ge8Q7-2f3qeA',
-      To: '"WIRELESS CALLER" <sip:17206666666*115@50.237.72.154>;tag=db3e8b0a-28bb-48e2-852d-371579c9b707',
-      Contact: '<sip:b6e8165c-c0c5-4897-a97a-57c754c3fe79@a34bcaa7-dbf5-4fc6-87fd-f7c5b3ab28d6.invalid;transport=ws>',
-      'Content-Type': 'application/sdp',
-      'P-rc-endpoint-id': 'e5a682cf-72da-4087-a456-453b3c7424eb',
-      'Client-id': '7K-VX-tDQTOa0CQbpjSslg',
-      Allow: 'ACK,CANCEL,INVITE,MESSAGE,BYE,OPTIONS,INFO,NOTIFY,REFER'
-    }, `v=0
-o=- 8459707152793500392 2 IN IP4 127.0.0.1
-s=-
-t=0 0
-a=msid-semantic: WMS
-m=audio 9 RTP/SAVPF 111 0 8 9 96 101
-c=IN IP4 0.0.0.0
-a=rtcp:9 IN IP4 0.0.0.0
-a=ice-ufrag:Tthu
-a=ice-pwd:eYefupkdcbRyhFoWGz6tq7pU
-a=ice-options:trickle
-a=fingerprint:sha-256 FD:72:04:3D:75:6B:E0:A9:B7:84:31:D7:07:44:D1:25:AD:DE:BD:77:36:D6:A4:4F:7D:0C:61:26:D9:A1:5B:F9
-a=setup:active
-a=mid:0
-a=recvonly
-a=rtcp-mux
-a=rtpmap:111 OPUS/48000/2
-a=fmtp:111 minptime=10;useinbandfec=1
-a=rtpmap:0 pcmu/8000
-a=rtpmap:8 pcma/8000
-a=rtpmap:9 g722/8000
-a=rtpmap:96 ilbc/8000
-a=rtpmap:101 telephone-event/8000
-`.split('\n').join('\r\n'))
-
-    expect(sipMessage.toString()).toBe(`SIP/2.0 200 OK
-User-Agent: SoftphoneTest/1.0.0
-Supported: outbound
-CSeq: 218557040 INVITE
-Call-ID: e6eaca5f7cb54701aa103e5b17d3d4bf
-From: "WIRELESS CALLER" <sip:+16506666666@104.245.57.165>;tag=10.13.22.19-5070-c3e8b4c2377649d
-Via: SIP/2.0/WSS 104.245.57.165:8083;rport;branch=z9hG4bK3Ge8Q7-2f3qeA
-To: "WIRELESS CALLER" <sip:17206666666*115@50.237.72.154>;tag=db3e8b0a-28bb-48e2-852d-371579c9b707
-Contact: <sip:b6e8165c-c0c5-4897-a97a-57c754c3fe79@a34bcaa7-dbf5-4fc6-87fd-f7c5b3ab28d6.invalid;transport=ws>
-Content-Type: application/sdp
-P-rc-endpoint-id: e5a682cf-72da-4087-a456-453b3c7424eb
-Client-id: 7K-VX-tDQTOa0CQbpjSslg
-Allow: ACK,CANCEL,INVITE,MESSAGE,BYE,OPTIONS,INFO,NOTIFY,REFER
-Content-Length: 599
-
-v=0
-o=- 8459707152793500392 2 IN IP4 127.0.0.1
-s=-
-t=0 0
-a=msid-semantic: WMS
-m=audio 9 RTP/SAVPF 111 0 8 9 96 101
-c=IN IP4 0.0.0.0
-a=rtcp:9 IN IP4 0.0.0.0
-a=ice-ufrag:Tthu
-a=ice-pwd:eYefupkdcbRyhFoWGz6tq7pU
-a=ice-options:trickle
-a=fingerprint:sha-256 FD:72:04:3D:75:6B:E0:A9:B7:84:31:D7:07:44:D1:25:AD:DE:BD:77:36:D6:A4:4F:7D:0C:61:26:D9:A1:5B:F9
-a=setup:active
-a=mid:0
-a=recvonly
-a=rtcp-mux
-a=rtpmap:111 OPUS/48000/2
-a=fmtp:111 minptime=10;useinbandfec=1
-a=rtpmap:0 pcmu/8000
-a=rtpmap:8 pcma/8000
-a=rtpmap:9 g722/8000
-a=rtpmap:96 ilbc/8000
-a=rtpmap:101 telephone-event/8000
-`.split('\n').join('\r\n'))
+      CSeq: '218658393 INVITE',
+      'Call-ID': '7661f03e2b374012b8cfe8e7f1442261',
+      From: '"WIRELESS CALLER" <sip:+16504306662@104.245.57.165>;tag=10.13.22.242-5070-26c2b3fce8a242',
+      Via: 'SIP/2.0/WSS 104.245.57.165:8083;rport;branch=z9hG4bK1HlzGT-2WxVW2',
+      To: '"WIRELESS CALLER" <sip:17203861294*115@50.237.72.154>;tag=9bfeee30-dea5-4069-be7d-b43b8a14a05a',
+      Contact: '<sip:f00b012e-4b95-45dc-a530-27e04537b158.invalid;transport=ws>',
+      'Content-Length': 0
+    })
   })
 })

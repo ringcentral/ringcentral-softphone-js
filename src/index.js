@@ -236,9 +236,9 @@ const rc = new RingCentral({
 
   /* this is for debugging - start */
   ws.addEventListener('message', event => {
-    // console.log('\n***** WebSocket Got - start *****')
-    // console.log(event.data)
-    // console.log('***** WebSocket Got - end *****\n')
+    console.log('\n***** WebSocket Got - start *****')
+    console.log(event.data)
+    console.log('***** WebSocket Got - end *****\n')
   })
   const send = ws.send.bind(ws)
   ws.send = (...args) => {
