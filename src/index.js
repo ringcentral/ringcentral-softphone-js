@@ -52,7 +52,6 @@ const answer = (offerHeaders, lines) => {
       lines = addHeader(`${header}: ${offerHeaders[header]}`, lines)
     }
   }
-  lines = addHeader('Supported: outbound', lines)
   lines = addHeader('User-Agent: SoftphoneTest/1.0.0', lines)
   const message = lines.join('\r\n')
   ws.send(message)
@@ -67,7 +66,6 @@ const openHandler = async (event) => {
     `To: <sip:${sipInfo.username}@${sipInfo.domain}>`,
     `Call-ID: ${callerId}`,
     `Contact: <sip:${fakeEmail};transport=ws>;expires=600`,
-    'Supported: path, gruu, outbound',
     `Client-id: ${process.env.RINGCENTRAL_CLIENT_ID}`,
     'Content-Length: 0',
     '',
@@ -129,7 +127,6 @@ const inviteHandler = async (event) => {
       `From: <sip:${rcMessage.Hdr.To}@sip.ringcentral.com>;tag=${fromTag}`,
       `Call-ID: ${callerId}`,
       'Content-Type: x-rc/agent',
-      'Supported: outbound',
       `P-rc-ws: <sip:${fakeEmail};transport=ws>`,
       `Content-Length: ${newMsgStr.length}`,
       '',
