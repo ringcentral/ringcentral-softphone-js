@@ -17,7 +17,6 @@ const fromTag = uuid()
 const toTag = uuid()
 const callerId = uuid()
 let cseq = Math.floor(Math.random() * 10000)
-const rcEndpointId = uuid()
 
 let ws
 let sipInfo
@@ -70,7 +69,6 @@ const openHandler = async (event) => {
     `Contact: <sip:${fakeEmail};transport=ws>;expires=600`,
     'Allow: ACK,CANCEL,INVITE,MESSAGE,BYE,OPTIONS,INFO,NOTIFY,REFER',
     'Supported: path, gruu, outbound',
-    `P-rc-endpoint-id: ${rcEndpointId}`,
     `Client-id: ${process.env.RINGCENTRAL_CLIENT_ID}`,
     'Content-Length: 0',
     '',
@@ -187,7 +185,6 @@ const inviteHandler = async (event) => {
       `To: ${offerHeaders.To};tag=${toTag}`,
       `Contact: <sip:${fakeEmail};transport=ws>`,
       'Content-Type: application/sdp',
-      `P-rc-endpoint-id: ${rcEndpointId}`,
       `Client-id: ${process.env.RINGCENTRAL_CLIENT_ID}`,
       'Allow: ACK,CANCEL,INVITE,MESSAGE,BYE,OPTIONS,INFO,NOTIFY,REFER',
       `Content-Length: ${localRtcSd.sdp.length}`,

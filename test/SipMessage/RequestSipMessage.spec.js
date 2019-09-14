@@ -11,7 +11,6 @@ describe('RequestSipMessage', () => {
       'Client-id': '7K-VX-tDQTOa0CQbpjSslg',
       Contact: '<sip:db228b2d-10a2-4a61-aeb1-3e5697c4348e@f00b012e-4b95-45dc-a530-27e04537b158.invalid;transport=ws>;expires=600',
       From: '<sip:17203861294*115@sip.ringcentral.com>;tag=ab6de166-c075-4fc8-9f83-1129199d1b25',
-      'P-rc-endpoint-id': '1d713220-e74a-4e95-926c-a1af47e67f55',
       Supported: 'path, gruu, outbound',
       To: '<sip:17203861294*115@sip.ringcentral.com>',
       Via: 'SIP/2.0/WSS f00b012e-4b95-45dc-a530-27e04537b158.invalid;branch=z9hG4bKf91a2558-5eb4-4e6a-a8db-d23f2b8d59a3'
@@ -28,7 +27,6 @@ describe('RequestSipMessage', () => {
       Contact: '<sip:db228b2d-10a2-4a61-aeb1-3e5697c4348e@f00b012e-4b95-45dc-a530-27e04537b158.invalid;transport=ws>;expires=600',
       Allow: 'ACK,CANCEL,INVITE,MESSAGE,BYE,OPTIONS,INFO,NOTIFY,REFER',
       Supported: 'path, gruu, outbound',
-      'P-rc-endpoint-id': '1d713220-e74a-4e95-926c-a1af47e67f55',
       'Client-id': '7K-VX-tDQTOa0CQbpjSslg',
       'Content-Length': 0
     })
