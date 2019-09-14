@@ -67,7 +67,6 @@ const openHandler = async (event) => {
     `To: <sip:${sipInfo.username}@${sipInfo.domain}>`,
     `Call-ID: ${callerId}`,
     `Contact: <sip:${fakeEmail};transport=ws>;expires=600`,
-    'Allow: ACK,CANCEL,INVITE,MESSAGE,BYE,OPTIONS,INFO,NOTIFY,REFER',
     'Supported: path, gruu, outbound',
     `Client-id: ${process.env.RINGCENTRAL_CLIENT_ID}`,
     'Content-Length: 0',
@@ -186,7 +185,6 @@ const inviteHandler = async (event) => {
       `Contact: <sip:${fakeEmail};transport=ws>`,
       'Content-Type: application/sdp',
       `Client-id: ${process.env.RINGCENTRAL_CLIENT_ID}`,
-      'Allow: ACK,CANCEL,INVITE,MESSAGE,BYE,OPTIONS,INFO,NOTIFY,REFER',
       `Content-Length: ${localRtcSd.sdp.length}`,
       '',
       localRtcSd.sdp

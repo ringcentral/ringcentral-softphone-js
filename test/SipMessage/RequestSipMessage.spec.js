@@ -5,7 +5,6 @@ import { version } from '../../package.json'
 describe('RequestSipMessage', () => {
   test('Register', async () => {
     const requestSipMessage = new RequestSipMessage('REGISTER sip:sip.ringcentral.com SIP/2.0', {
-      Allow: 'ACK,CANCEL,INVITE,MESSAGE,BYE,OPTIONS,INFO,NOTIFY,REFER',
       CSeq: '8145 REGISTER',
       'Call-ID': '9968cdcb-70a2-4275-9cd2-f50d42343b6e',
       'Client-id': '7K-VX-tDQTOa0CQbpjSslg',
@@ -25,7 +24,6 @@ describe('RequestSipMessage', () => {
       To: '<sip:17203861294*115@sip.ringcentral.com>',
       'Call-ID': '9968cdcb-70a2-4275-9cd2-f50d42343b6e',
       Contact: '<sip:db228b2d-10a2-4a61-aeb1-3e5697c4348e@f00b012e-4b95-45dc-a530-27e04537b158.invalid;transport=ws>;expires=600',
-      Allow: 'ACK,CANCEL,INVITE,MESSAGE,BYE,OPTIONS,INFO,NOTIFY,REFER',
       Supported: 'path, gruu, outbound',
       'Client-id': '7K-VX-tDQTOa0CQbpjSslg',
       'Content-Length': 0
