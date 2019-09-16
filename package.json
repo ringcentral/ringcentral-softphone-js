@@ -22,6 +22,7 @@
     "dotenv-override-true": "^6.2.0",
     "husky": "^3.0.5",
     "jest": "^24.9.0",
+    "ramda": "^0.26.1",
     "standard": "^14.2.0",
     "yarn-upgrade-all": "^0.5.2"
   }
