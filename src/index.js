@@ -23,11 +23,16 @@ const callerId = uuid()
 let ws
 let sipInfo
 
-const send = async requestSipMessage => {
+const send = async sipMessage => {
   return new Promise((resolve, reject) => {
+    if (sipMessage.subject.startsWith('SIP/2.0 ')) { // response message, no waiting for response from server side
+      ws.send(sipMessage.toString())
+      resolve(undefined)
+      return
+    }
     const messageHandler = event => {
       const inboundSipMessage = InboundSipMessage.fromString(event.data)
-      if (inboundSipMessage.headers.CSeq !== requestSipMessage.headers.CSeq) {
+      if (inboundSipMessage.headers.CSeq !== sipMessage.headers.CSeq) {
         return // message not for this send
       }
       if (inboundSipMessage.subject === 'SIP/2.0 100 Trying') {
@@ -37,7 +42,7 @@ const send = async requestSipMessage => {
       resolve(inboundSipMessage)
     }
     ws.addEventListener('message', messageHandler)
-    ws.send(requestSipMessage.toString())
+    ws.send(sipMessage.toString())
   })
 }
 
@@ -67,13 +72,13 @@ const inviteHandler = async (event) => {
   const inboundSipMessage = InboundSipMessage.fromString(event.data)
   if (inboundSipMessage.subject.startsWith('INVITE sip:')) {
     ws.removeEventListener('message', inviteHandler) // todo: can accept one and only one call
-    ws.send(new ResponseSipMessage(inboundSipMessage, 100, 'Trying', {
+    await send(new ResponseSipMessage(inboundSipMessage, 100, 'Trying', {
       To: inboundSipMessage.headers.To
-    }).toString())
-    ws.send(new ResponseSipMessage(inboundSipMessage, 180, 'Ringing', {
+    }))
+    await send(new ResponseSipMessage(inboundSipMessage, 180, 'Ringing', {
       To: `${inboundSipMessage.headers.To};tag=${toTag}`,
       Contact: `<sip:${fakeDomain};transport=ws>`
-    }).toString())
+    }))
 
     const sdp = inboundSipMessage.body
     const rcMessage = RcMessage.fromXml(inboundSipMessage.headers['P-rc'])
@@ -142,22 +147,22 @@ const inviteHandler = async (event) => {
     const localRtcSd = await rtcpc.createAnswer()
     rtcpc.setLocalDescription(localRtcSd)
 
-    ws.send(new ResponseSipMessage(inboundSipMessage, 200, 'OK', {
+    await send(new ResponseSipMessage(inboundSipMessage, 200, 'OK', {
       To: `${inboundSipMessage.headers.To};tag=${toTag}`,
       Contact: `<sip:${fakeEmail};transport=ws>`,
       'Content-Type': 'application/sdp'
-    }, localRtcSd.sdp).toString())
+    }, localRtcSd.sdp))
     ws.addEventListener('message', takeOverHandler)
   }
 }
 
-const takeOverHandler = event => {
+const takeOverHandler = async event => {
   const inboundSipMessage = InboundSipMessage.fromString(event.data)
   if (inboundSipMessage.subject.startsWith('MESSAGE ') && inboundSipMessage.body.includes(' Cmd="7"')) {
     ws.removeEventListener('message', takeOverHandler)
-    ws.send(new ResponseSipMessage(inboundSipMessage, 200, 'OK', {
+    await send(new ResponseSipMessage(inboundSipMessage, 200, 'OK', {
       To: `${inboundSipMessage.headers.To};tag=${toTag}`
-    }).toString())
+    }))
   }
 }
 
