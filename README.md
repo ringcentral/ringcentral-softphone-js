@@ -70,3 +70,5 @@ Show the text to the caller and/or callee so they can see live transcription.
 
 - state machine
 - make outbound call
+- make it support browser
+- make it TS?
