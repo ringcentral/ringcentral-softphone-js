@@ -37,6 +37,10 @@ const send = async sipMessage => {
       if (inboundSipMessage.subject === 'SIP/2.0 100 Trying') {
         return // ignore
       }
+      if (inboundSipMessage.subject.startsWith('SIP/2.0 603 ')) {
+        reject(inboundSipMessage)
+        return
+      }
       ws.removeEventListener('message', messageHandler)
       resolve(inboundSipMessage)
     }

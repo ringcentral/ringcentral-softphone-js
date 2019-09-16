@@ -33,6 +33,10 @@ const send = async sipMessage => {
       if (inboundSipMessage.subject === 'SIP/2.0 100 Trying') {
         return // ignore
       }
+      if (inboundSipMessage.subject.startsWith('SIP/2.0 603 ')) {
+        reject(inboundSipMessage)
+        return
+      }
       ws.removeEventListener('message', messageHandler)
       resolve(inboundSipMessage)
     }
@@ -103,11 +107,15 @@ const inviteHandler = async e => {
     const rtcpc = new global.RTCPeerConnection({ iceServers: [{ urls: 'stun:74.125.194.127:19302' }] })
 
     rtcpc.addEventListener('track', e => {
-      document.getElementById('audio').srcObject = e.streams[0]
+      const audioElement = document.getElementById('audio')
+      audioElement.srcObject = e.streams[0]
+      audioElement.play()
       const byeHandler = e => {
         if (e.data.startsWith('BYE ')) {
           ws.removeEventListener('message', byeHandler)
           console.log('audio end')
+          audioElement.pause()
+          audioElement.srcObject = null
         }
       }
       ws.addEventListener('message', byeHandler)
