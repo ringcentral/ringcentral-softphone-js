@@ -1,7 +1,7 @@
-import WS from 'ws'
+import WebSocket from 'isomorphic-ws'
 import uuid from 'uuid/v4'
 import fs from 'fs'
-import { SDK } from '@ringcentral/sdk'
+import RingCentral from '@ringcentral/sdk'
 import { RTCSessionDescription, RTCPeerConnection, nonstandard } from 'wrtc'
 
 import { generateAuthorization } from './utils'
@@ -10,7 +10,6 @@ import RequestSipMessage from './SipMessage/outbound/RequestSipMessage'
 import InboundSipMessage from './SipMessage/inbound/InboundSipMessage'
 import ResponseSipMessage from './SipMessage/outbound/ResponseSipMessage'
 
-const RingCentral = SDK
 const RTCAudioSink = nonstandard.RTCAudioSink
 
 const fakeDomain = uuid() + '.invalid'
@@ -107,21 +106,6 @@ const inviteHandler = async (event) => {
     const remoteRtcSd = new RTCSessionDescription({ type: 'offer', sdp })
     const rtcpc = new RTCPeerConnection({ iceServers: [{ urls: 'stun:74.125.194.127:19302' }] })
 
-    /* this is for debugging - start */
-    // const eventNames = [
-    //   'addstream', 'connectionstatechange', 'datachannel', 'icecandidate',
-    //   'iceconnectionstatechange', 'icegatheringstatechange', 'identityresult',
-    //   'negotiationneeded', 'removestream', 'signalingstatechange', 'track'
-    // ]
-    // for (const eventName of eventNames) {
-    //   rtcpc.addEventListener(eventName, e => {
-    //     console.log(`\n****** RTCPeerConnection ${eventName} event - start *****`)
-    //     console.log(e)
-    //     console.log(`****** RTCPeerConnection ${eventName} event - end *****\n`)
-    //   })
-    // }
-    /* this is for debugging - end */
-
     rtcpc.addEventListener('track', e => {
       const audioSink = new RTCAudioSink(e.track)
 
@@ -184,7 +168,7 @@ const rc = new RingCentral({
   await rc.logout()
   const json = await r.json()
   sipInfo = json.sipInfo[0]
-  ws = new WS('wss://' + sipInfo.outboundProxy, 'sip')
+  ws = new WebSocket('wss://' + sipInfo.outboundProxy, 'sip')
   ws.addEventListener('open', openHandler)
 
   /* this is for debugging - start */

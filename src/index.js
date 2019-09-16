@@ -1,17 +1,12 @@
-import WS from 'ws'
+import WebSocket from 'isomorphic-ws'
 import uuid from 'uuid/v4'
-import fs from 'fs'
-import { SDK } from '@ringcentral/sdk'
-import { RTCSessionDescription, RTCPeerConnection, nonstandard } from 'wrtc'
+import RingCentral from '@ringcentral/sdk'
 
 import { generateAuthorization } from './utils'
 import RcMessage from './RcMessage'
 import RequestSipMessage from './SipMessage/outbound/RequestSipMessage'
 import InboundSipMessage from './SipMessage/inbound/InboundSipMessage'
 import ResponseSipMessage from './SipMessage/outbound/ResponseSipMessage'
-
-const RingCentral = SDK
-const RTCAudioSink = nonstandard.RTCAudioSink
 
 const fakeDomain = uuid() + '.invalid'
 const fakeEmail = uuid() + '@' + fakeDomain
@@ -104,40 +99,15 @@ const inviteHandler = async (event) => {
     }, newMsgStr)
     await send(requestSipMessage)
 
-    const remoteRtcSd = new RTCSessionDescription({ type: 'offer', sdp })
-    const rtcpc = new RTCPeerConnection({ iceServers: [{ urls: 'stun:74.125.194.127:19302' }] })
-
-    /* this is for debugging - start */
-    // const eventNames = [
-    //   'addstream', 'connectionstatechange', 'datachannel', 'icecandidate',
-    //   'iceconnectionstatechange', 'icegatheringstatechange', 'identityresult',
-    //   'negotiationneeded', 'removestream', 'signalingstatechange', 'track'
-    // ]
-    // for (const eventName of eventNames) {
-    //   rtcpc.addEventListener(eventName, e => {
-    //     console.log(`\n****** RTCPeerConnection ${eventName} event - start *****`)
-    //     console.log(e)
-    //     console.log(`****** RTCPeerConnection ${eventName} event - end *****\n`)
-    //   })
-    // }
-    /* this is for debugging - end */
+    const remoteRtcSd = new global.RTCSessionDescription({ type: 'offer', sdp })
+    const rtcpc = new global.RTCPeerConnection({ iceServers: [{ urls: 'stun:74.125.194.127:19302' }] })
 
     rtcpc.addEventListener('track', e => {
-      const audioSink = new RTCAudioSink(e.track)
-
-      const audioPath = 'audio.raw'
-      if (fs.existsSync(audioPath)) {
-        fs.unlinkSync(audioPath)
-      }
-      const stream = fs.createWriteStream(audioPath, { flags: 'a' })
-      audioSink.ondata = data => {
-        stream.write(Buffer.from(data.samples.buffer))
-      }
+      document.getElementById('audio').srcObject = event.streams[0]
       const byeHandler = e => {
         if (e.data.startsWith('BYE ')) {
           ws.removeEventListener('message', byeHandler)
-          audioSink.stop()
-          stream.end()
+          console.log('audio end')
         }
       }
       ws.addEventListener('message', byeHandler)
@@ -184,7 +154,7 @@ const rc = new RingCentral({
   await rc.logout()
   const json = await r.json()
   sipInfo = json.sipInfo[0]
-  ws = new WS('wss://' + sipInfo.outboundProxy, 'sip')
+  ws = new WebSocket('wss://' + sipInfo.outboundProxy, 'sip')
   ws.addEventListener('open', openHandler)
 
   /* this is for debugging - start */
