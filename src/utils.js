@@ -19,7 +19,7 @@ Sample input:
 */
 export const generateAuthorization = (sipInfo, method, nonce) => {
   const { authorizationId: username, password, domain: realm } = sipInfo
-  return `Authorization: Digest algorithm=MD5, username="${username}", realm="${realm}", nonce="${nonce}", uri="sip:${realm}", response="${generateResponse(username, password, realm, method, `sip:${realm}`, nonce)}"`
+  return `Digest algorithm=MD5, username="${username}", realm="${realm}", nonce="${nonce}", uri="sip:${realm}", response="${generateResponse(username, password, realm, method, `sip:${realm}`, nonce)}"`
 }
 
 /*
@@ -27,14 +27,5 @@ Proxy-Authorization: Digest algorithm=MD5, username="802396666666", realm="sip.r
 */
 export const generateProxyAuthorization = (sipInfo, method, targetUser, nonce) => {
   const { authorizationId: username, password, domain: realm } = sipInfo
-  return `Proxy-Authorization: Digest algorithm=MD5, username="${username}", realm="${realm}", nonce="${nonce}", uri="sip:${targetUser}@${realm}", response="${generateResponse(username, password, realm, method, `sip:${targetUser}@${realm}`, nonce)}"`
-}
-
-export const parseSipHeaders = sipMessage => {
-  const headersStr = sipMessage.split('\r\n\r\n')[0]
-  return Object.fromEntries(headersStr.split('\r\n').filter(line => line.includes(': ')).map(line => line.trim().split(': ')))
-}
-
-export const addHeader = (headerLine, lines) => {
-  return [lines[0], headerLine, ...lines.slice(1)]
+  return `Digest algorithm=MD5, username="${username}", realm="${realm}", nonce="${nonce}", uri="sip:${targetUser}@${realm}", response="${generateResponse(username, password, realm, method, `sip:${targetUser}@${realm}`, nonce)}"`
 }

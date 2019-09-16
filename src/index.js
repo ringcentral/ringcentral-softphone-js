@@ -4,8 +4,11 @@ import fs from 'fs'
 import { SDK } from '@ringcentral/sdk'
 import { RTCSessionDescription, RTCPeerConnection, nonstandard } from 'wrtc'
 
-import { generateAuthorization, parseSipHeaders, addHeader } from './utils'
+import { generateAuthorization } from './utils'
 import RcMessage from './RcMessage'
+import RequestSipMessage from './SipMessage/outbound/RequestSipMessage'
+import InboundSipMessage from './SipMessage/inbound/InboundSipMessage'
+import ResponseSipMessage from './SipMessage/outbound/ResponseSipMessage'
 
 const RingCentral = SDK
 const RTCAudioSink = nonstandard.RTCAudioSink
@@ -16,94 +19,64 @@ const branch = () => 'z9hG4bK' + uuid()
 const fromTag = uuid()
 const toTag = uuid()
 const callerId = uuid()
-let cseq = Math.floor(Math.random() * 10000)
 
 let ws
 let sipInfo
 
-const send = async (lines, method) => {
+const send = async requestSipMessage => {
   return new Promise((resolve, reject) => {
-    const seq = cseq++
-    const seqLine = `CSeq: ${seq} ${method}`
-    lines = addHeader(seqLine, lines)
-    lines = addHeader('Max-Forwards: 70', lines)
-    lines = addHeader('User-Agent: SoftphoneTest/1.0.0', lines)
-    const message = lines.join('\r\n')
     const messageHandler = event => {
-      const data = event.data
-      if (!data.includes(seqLine)) {
+      const inboundSipMessage = InboundSipMessage.fromString(event.data)
+      if (inboundSipMessage.headers.CSeq !== requestSipMessage.headers.CSeq) {
         return // message not for this send
       }
-      if (data.startsWith('SIP/2.0 100 Trying')) {
+      if (inboundSipMessage.subject === 'SIP/2.0 100 Trying') {
         return // ignore
       }
       ws.removeEventListener('message', messageHandler)
-      resolve(data)
+      resolve(inboundSipMessage)
     }
     ws.addEventListener('message', messageHandler)
-    ws.send(message)
+    ws.send(requestSipMessage.toString())
   })
-}
-
-const answer = (offerHeaders, lines) => {
-  const sameHeaders = ['Via', 'From', 'Call-ID', 'CSeq']
-  for (const header of sameHeaders) {
-    if (offerHeaders[header]) {
-      lines = addHeader(`${header}: ${offerHeaders[header]}`, lines)
-    }
-  }
-  lines = addHeader('User-Agent: SoftphoneTest/1.0.0', lines)
-  const message = lines.join('\r\n')
-  ws.send(message)
 }
 
 const openHandler = async (event) => {
   ws.removeEventListener('open', openHandler)
-  const registerLines = [
-    `REGISTER sip:${sipInfo.domain} SIP/2.0`,
-    `Via: SIP/2.0/WSS ${fakeDomain};branch=${branch()}`,
-    `From: <sip:${sipInfo.username}@${sipInfo.domain}>;tag=${fromTag}`,
-    `To: <sip:${sipInfo.username}@${sipInfo.domain}>`,
-    `Call-ID: ${callerId}`,
-    `Contact: <sip:${fakeEmail};transport=ws>;expires=600`,
-    'Content-Length: 0',
-    '',
-    ''
-  ]
-  let data = await send(registerLines, 'REGISTER')
-  if (data.includes(', nonce="')) { // authorization required
-    const nonce = data.match(/, nonce="(.+?)"/)[1]
-    data = await send(addHeader(generateAuthorization(sipInfo, 'REGISTER', nonce), registerLines), 'REGISTER')
-    if (data.startsWith('SIP/2.0 200 OK')) { // register successful
+  const requestSipMessage = new RequestSipMessage(`REGISTER sip:${sipInfo.domain} SIP/2.0`, {
+    CSeq: '8145 REGISTER',
+    'Call-ID': callerId,
+    Contact: `<sip:${fakeEmail};transport=ws>;expires=600`,
+    From: `<sip:${sipInfo.username}@${sipInfo.domain}>;tag=${fromTag}`,
+    To: `<sip:${sipInfo.username}@${sipInfo.domain}>`,
+    Via: `SIP/2.0/WSS ${fakeDomain};branch=${branch()}`
+  })
+  let inboundSipMessage = await send(requestSipMessage)
+  const wwwAuth = inboundSipMessage.headers['Www-Authenticate']
+  if (wwwAuth && wwwAuth.includes(', nonce="')) { // authorization required
+    const nonce = wwwAuth.match(/, nonce="(.+?)"/)[1]
+    requestSipMessage.headers.Authorization = generateAuthorization(sipInfo, 'REGISTER', nonce)
+    inboundSipMessage = await send(requestSipMessage)
+    if (inboundSipMessage.subject === 'SIP/2.0 200 OK') { // register successful
       ws.addEventListener('message', inviteHandler)
     }
   }
 }
 
 const inviteHandler = async (event) => {
-  const data = event.data
-  if (data.startsWith('INVITE sip:')) {
+  const inboundSipMessage = InboundSipMessage.fromString(event.data)
+  if (inboundSipMessage.subject.startsWith('INVITE sip:')) {
     ws.removeEventListener('message', inviteHandler) // todo: can accept one and only one call
-    const offerHeaders = parseSipHeaders(data)
+    ws.send(new ResponseSipMessage(inboundSipMessage, 100, 'Trying', {
+      To: inboundSipMessage.headers.To
+    }).toString())
+    ws.send(new ResponseSipMessage(inboundSipMessage, 180, 'Ringing', {
+      To: `${inboundSipMessage.headers.To};tag=${toTag}`,
+      Contact: `<sip:${fakeDomain};transport=ws>`
+    }).toString())
 
-    answer(offerHeaders, [
-      'SIP/2.0 100 Trying',
-      `To: ${offerHeaders.To}`,
-      'Content-Length: 0',
-      '',
-      ''
-    ])
-    answer(offerHeaders, [
-      'SIP/2.0 180 Ringing',
-      `To: ${offerHeaders.To};tag=${toTag}`,
-      `Contact: <sip:${fakeDomain};transport=ws>`,
-      'Content-Length: 0',
-      '',
-      ''
-    ])
-
-    const sdp = 'v=0\r\n' + data.split('\r\nv=0\r\n')[1].trim() + '\r\n'
-    const rcMessage = RcMessage.fromXml(offerHeaders['P-rc'])
+    const sdp = inboundSipMessage.body
+    const rcMessage = RcMessage.fromXml(inboundSipMessage.headers['P-rc'])
     const newRcMessage = new RcMessage(
       {
         SID: rcMessage.Hdr.SID,
@@ -117,19 +90,14 @@ const inviteHandler = async (event) => {
       }
     )
     const newMsgStr = newRcMessage.toXml()
-    // this is for 17: receiveConfirm
-    // not sure why server side needs this
-    await send([
-      `MESSAGE sip:${rcMessage.Hdr.From.replace('#', '%23')} SIP/2.0`,
-      `Via: SIP/2.0/WSS ${fakeEmail};branch=${branch()}`,
-      `To: <sip:${rcMessage.Hdr.From.replace('#', '%23')}>`,
-      `From: <sip:${rcMessage.Hdr.To}@sip.ringcentral.com>;tag=${fromTag}`,
-      `Call-ID: ${callerId}`,
-      'Content-Type: x-rc/agent',
-      `Content-Length: ${newMsgStr.length}`,
-      '',
-      newMsgStr
-    ], 'MESSAGE')
+    const requestSipMessage = new RequestSipMessage(`MESSAGE sip:${rcMessage.Hdr.From.replace('#', '%23')} SIP/2.0`, {
+      Via: `SIP/2.0/WSS ${fakeEmail};branch=${branch()}`,
+      To: `<sip:${rcMessage.Hdr.From.replace('#', '%23')}>`,
+      From: `<sip:${rcMessage.Hdr.To}@sip.ringcentral.com>;tag=${fromTag}`,
+      'Call-ID': callerId,
+      'Content-Type': 'x-rc/agent'
+    }, newMsgStr)
+    await send(requestSipMessage)
 
     const remoteRtcSd = new RTCSessionDescription({ type: 'offer', sdp })
     const rtcpc = new RTCPeerConnection({ iceServers: [{ urls: 'stun:74.125.194.127:19302' }] })
@@ -174,31 +142,22 @@ const inviteHandler = async (event) => {
     const localRtcSd = await rtcpc.createAnswer()
     rtcpc.setLocalDescription(localRtcSd)
 
-    answer(offerHeaders, [
-      'SIP/2.0 200 OK',
-      `To: ${offerHeaders.To};tag=${toTag}`,
-      `Contact: <sip:${fakeEmail};transport=ws>`,
-      'Content-Type: application/sdp',
-      `Content-Length: ${localRtcSd.sdp.length}`,
-      '',
-      localRtcSd.sdp
-    ])
+    ws.send(new ResponseSipMessage(inboundSipMessage, 200, 'OK', {
+      To: `${inboundSipMessage.headers.To};tag=${toTag}`,
+      Contact: `<sip:${fakeEmail};transport=ws>`,
+      'Content-Type': 'application/sdp'
+    }, localRtcSd.sdp).toString())
     ws.addEventListener('message', takeOverHandler)
   }
 }
 
 const takeOverHandler = event => {
-  const data = event.data
-  if (data.startsWith('MESSAGE ') && data.includes(' Cmd="7"')) {
+  const inboundSipMessage = InboundSipMessage.fromString(event.data)
+  if (inboundSipMessage.subject.startsWith('MESSAGE ') && inboundSipMessage.body.includes(' Cmd="7"')) {
     ws.removeEventListener('message', takeOverHandler)
-    const messageHeaders = parseSipHeaders(data)
-    answer(messageHeaders, [
-      'SIP/2.0 200 OK',
-      `To: ${messageHeaders.To};tag=${toTag}`,
-      'Content-Length: 0',
-      '',
-      ''
-    ])
+    ws.send(new ResponseSipMessage(inboundSipMessage, 200, 'OK', {
+      To: `${inboundSipMessage.headers.To};tag=${toTag}`
+    }).toString())
   }
 }
 
