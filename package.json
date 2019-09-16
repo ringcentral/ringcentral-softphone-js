@@ -3,7 +3,8 @@
   "version": "0.1.0",
   "license": "MIT",
   "scripts": {
-    "start": "node -r dotenv-override-true/config -r @babel/register src/index.js",
+    "start": "node -r dotenv-override-true/config -r @babel/register src/node.js",
+    "browser": "webpack-dev-server --progress --colors",
     "test": "standard && jest",
     "prepush": "yarn test"
   },
@@ -24,6 +25,9 @@
     "jest": "^24.9.0",
     "ramda": "^0.26.1",
     "standard": "^14.2.0",
+    "webpack": "^4.40.2",
+    "webpack-cli": "^3.3.8",
+    "webpack-dev-server": "^3.8.1",
     "yarn-upgrade-all": "^0.5.2"
   }
 }
