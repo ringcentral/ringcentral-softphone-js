@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "license": "MIT",
   "scripts": {
-    "start": "node -r dotenv-override-true/config -r @babel/register src/node.js",
+    "server": "node -r dotenv-override-true/config -r @babel/register src/node.js",
     "browser": "webpack-dev-server --progress --colors",
     "test": "standard && jest",
     "prepush": "yarn test"

@@ -25,8 +25,8 @@ const send = async sipMessage => {
       resolve(undefined)
       return
     }
-    const messageHandler = event => {
-      const inboundSipMessage = InboundSipMessage.fromString(event.data)
+    const messageHandler = e => {
+      const inboundSipMessage = InboundSipMessage.fromString(e.data)
       if (inboundSipMessage.headers.CSeq !== sipMessage.headers.CSeq) {
         return // message not for this send
       }
@@ -41,7 +41,7 @@ const send = async sipMessage => {
   })
 }
 
-const openHandler = async (event) => {
+const openHandler = async e => {
   ws.removeEventListener('open', openHandler)
   const requestSipMessage = new RequestSipMessage(`REGISTER sip:${sipInfo.domain} SIP/2.0`, {
     CSeq: '8145 REGISTER',
@@ -63,8 +63,8 @@ const openHandler = async (event) => {
   }
 }
 
-const inviteHandler = async (event) => {
-  const inboundSipMessage = InboundSipMessage.fromString(event.data)
+const inviteHandler = async e => {
+  const inboundSipMessage = InboundSipMessage.fromString(e.data)
   if (inboundSipMessage.subject.startsWith('INVITE sip:')) {
     ws.removeEventListener('message', inviteHandler) // todo: can accept one and only one call
     await send(new ResponseSipMessage(inboundSipMessage, 100, 'Trying', {
@@ -103,7 +103,7 @@ const inviteHandler = async (event) => {
     const rtcpc = new global.RTCPeerConnection({ iceServers: [{ urls: 'stun:74.125.194.127:19302' }] })
 
     rtcpc.addEventListener('track', e => {
-      document.getElementById('audio').srcObject = event.streams[0]
+      document.getElementById('audio').srcObject = e.streams[0]
       const byeHandler = e => {
         if (e.data.startsWith('BYE ')) {
           ws.removeEventListener('message', byeHandler)
@@ -126,8 +126,8 @@ const inviteHandler = async (event) => {
   }
 }
 
-const takeOverHandler = async event => {
-  const inboundSipMessage = InboundSipMessage.fromString(event.data)
+const takeOverHandler = async e => {
+  const inboundSipMessage = InboundSipMessage.fromString(e.data)
   if (inboundSipMessage.subject.startsWith('MESSAGE ') && inboundSipMessage.body.includes(' Cmd="7"')) {
     ws.removeEventListener('message', takeOverHandler)
     await send(new ResponseSipMessage(inboundSipMessage, 200, 'OK', {
@@ -158,9 +158,9 @@ const rc = new RingCentral({
   ws.addEventListener('open', openHandler)
 
   /* this is for debugging - start */
-  ws.addEventListener('message', event => {
+  ws.addEventListener('message', e => {
     console.log('\n***** WebSocket Got - start *****')
-    console.log(event.data)
+    console.log(e.data)
     console.log('***** WebSocket Got - end *****\n')
   })
   const send = ws.send.bind(ws)
