@@ -31,9 +31,9 @@ class Softphone extends EventEmitter {
         Contact: `<sip:${this.fakeDomain};transport=ws>`
       }))
       this.inviteSipMessage = inboundSipMessage
-      this.emit('invite', this.inviteSipMessage)
+      this.emit('INVITE', this.inviteSipMessage)
     } else if (inboundSipMessage.subject.startsWith('BYE ')) { // bye
-      this.emit('bye', inboundSipMessage)
+      this.emit('BYE', inboundSipMessage)
     } else if (inboundSipMessage.subject.startsWith('MESSAGE ') && inboundSipMessage.body.includes(' Cmd="7"')) { // take over
       await this.send(new ResponseSipMessage(inboundSipMessage, 200, 'OK', {
         To: `${inboundSipMessage.headers.To};tag=${this.toTag}`
@@ -74,10 +74,24 @@ class Softphone extends EventEmitter {
     const json = await r.json()
     this.sipInfo = json.sipInfo[0]
     this.ws = new WebSocket('wss://' + this.sipInfo.outboundProxy, 'sip')
+    /* this is for debugging - start */
     this.ws.addEventListener('message', e => {
-      const inboundSipMessage = InboundSipMessage.fromString(e.data)
-      this.emit('sipMessage', inboundSipMessage)
-      this.handleSipMessage(inboundSipMessage)
+      console.log('\n***** WebSocket Got - start *****')
+      console.log(e.data)
+      console.log('***** WebSocket Got - end *****\n')
+    })
+    const send = this.ws.send.bind(this.ws)
+    this.ws.send = (...args) => {
+      console.log('\n***** WebSocket Send - start *****')
+      console.log(...args)
+      console.log('***** WebSocket Send - end *****\n')
+      send(...args)
+    }
+    /* this is for debugging - end */
+    this.ws.addEventListener('message', e => {
+      const sipMessage = InboundSipMessage.fromString(e.data)
+      this.emit('sipMessage', sipMessage)
+      this.handleSipMessage(sipMessage)
     })
     const openHandler = async e => {
       this.ws.removeEventListener('open', openHandler)
