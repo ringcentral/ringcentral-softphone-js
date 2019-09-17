@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@ringcentral/sdk": "^4.0.0-alpha.7",
+    "isomorphic-webrtc": "^0.1.0",
     "isomorphic-ws": "^4.0.1",
     "uuid": "^3.3.3",
     "wrtc": "^0.4.1",

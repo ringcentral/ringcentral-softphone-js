@@ -52,7 +52,6 @@ const send = async sipMessage => {
 const openHandler = async e => {
   ws.removeEventListener('open', openHandler)
   const requestSipMessage = new RequestSipMessage(`REGISTER sip:${sipInfo.domain} SIP/2.0`, {
-    CSeq: '8145 REGISTER',
     'Call-ID': callerId,
     Contact: `<sip:${fakeEmail};transport=ws>;expires=600`,
     From: `<sip:${sipInfo.username}@${sipInfo.domain}>;tag=${fromTag}`,
