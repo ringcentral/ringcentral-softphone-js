@@ -1,6 +1,4 @@
-import crypto from 'crypto'
-
-const md5 = str => crypto.createHash('md5').update(str).digest('hex')
+import md5 from 'blueimp-md5'
 
 const generateResponse = (username, password, realm, method, uri, nonce) => {
   const ha1 = md5(username + ':' + realm + ':' + password)

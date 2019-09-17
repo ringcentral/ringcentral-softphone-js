@@ -2,13 +2,16 @@
   "name": "ringcentral-softphone",
   "version": "0.1.0",
   "license": "MIT",
+  "main": "dist/index.js",
   "scripts": {
     "server": "node -r dotenv-override-true/config -r @babel/register demos/node.js",
     "browser": "webpack-dev-server --progress --colors --open",
     "test": "standard && jest",
+    "release": "webpack --progress --colors --config webpack.config.prod.babel.js",
     "prepush": "yarn test"
   },
   "dependencies": {
+    "blueimp-md5": "^2.12.0",
     "isomorphic-webrtc": "^0.1.0",
     "isomorphic-ws": "^4.0.1",
     "uuid": "^3.3.3",
@@ -27,6 +30,7 @@
     "ramda": "^0.26.1",
     "standard": "^14.2.0",
     "webpack": "^4.40.2",
+    "webpack-bundle-analyzer": "^3.5.0",
     "webpack-cli": "^3.3.8",
     "webpack-dev-server": "^3.8.1",
     "wrtc": "^0.4.2",
