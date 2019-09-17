@@ -23,7 +23,7 @@ const rc = new RingCentral({
     softphone.answer()
     softphone.on('track', e => {
       audioElement.srcObject = e.streams[0]
-      audioElement.play()
+      setTimeout(() => audioElement.play(), 100)
     })
   })
   softphone.on('BYE', () => {
