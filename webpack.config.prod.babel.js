@@ -1,20 +1,16 @@
-import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer'
+import nodeExternals from 'webpack-node-externals'
 
 const config = {
   mode: 'production',
   devtool: 'source-map',
+  target: 'node',
   entry: {
     index: './src/index.js'
   },
   output: {
-    library: 'Softphone',
-    libraryTarget: 'umd',
-    libraryExport: 'default',
-    globalObject: 'this' // fix window undefined issue in node
+    libraryTarget: 'commonjs2'
   },
-  plugins: [
-    new BundleAnalyzerPlugin()
-  ]
+  externals: [nodeExternals()]
 }
 
 export default [config]
