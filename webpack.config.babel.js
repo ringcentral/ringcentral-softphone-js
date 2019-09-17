@@ -4,7 +4,7 @@ import dotenv from 'dotenv-override-true'
 
 const config = {
   entry: {
-    index: './demos/browser.js'
+    index: './demos/browser2.js'
   },
   plugins: [
     new HtmlWebpackPlugin({
