@@ -1,12 +1,49 @@
 # RingCentral Softphone SDK for JavaScript
 
-
 ## Experimental
 
 This project is still in its early stage. It is not ready for production yet!
 
 
-## Setup
+## What are the differences between ringcentral-web-phone and this project?
+
+[ringcentral-web-phone](https://github.com/ringcentral/ringcentral-web-phone) is designed for client side and only works with browsers.
+
+This project was originally designed for server and desktop. It works both with and without browsers.
+
+
+## Install
+
+```
+yarn add ringcentral-softphone @ringcentral/sdk
+```
+
+For node.js you also need to:
+
+```
+yarn add ws wrtc
+```
+
+because node.js by default doesn't support WebSocket & WebRTC.
+
+
+## Usage
+
+```js
+import RingCentral from '@ringcentral/sdk'
+import Softphone from 'ringcentral-softphpone'
+
+const rc = new RingCentral(...)
+await rc.login(...)
+const softphone = new Softphone(rc)
+await softphone.register()
+// to be continued
+```
+
+
+## Demos
+
+### Setup
 
 ```
 yarn install
@@ -19,7 +56,7 @@ Note: please do NOT get rid of `NODE_TLS_REJECT_UNAUTHORIZED=0` in `.env` file. 
 You may remove it however if your app target browsers instead of node.js.
 
 
-## Run
+### Run
 
 For node.js:
 
@@ -34,11 +71,11 @@ yarn browser
 ```
 
 
-## Test
+### Test
 
 Make a phone call to the phone number you configured in `.env` file.
 
-### for node.js
+#### for node.js
 
 The app will auto pick up the call and save your voice to `audio.raw`
 
@@ -50,19 +87,12 @@ play -b 16 -e signed -c 1 -r 48000 audio.raw
 
 If `play` command is not available, please install sox: `brew install sox`.
 
-### for browsers
+#### for browsers
 
 The app will auto pick up the call and redirect your voice to an `<audio/>` HTML5 element.
 
 
-## What are the differences between ringcentral-web-phone and this project?
-
-[ringcentral-web-phone](https://github.com/ringcentral/ringcentral-web-phone) is designed for client side and only works with browsers.
-
-This project is designed for server or desktop and works without a browser. It could also be used with a browser.
-
-
-## Intersting Usage cases
+## Interesting Usage cases
 
 ### Call supervision
 
@@ -73,7 +103,7 @@ You can use this library to supervise this phone call to get live audio stream.
 You can analyze the audio stream using some AI algorithm and provide tips to the call agent in real time.
 
 
-## Live transcription
+### Live transcription
 
 Use this library to supervise an existing phone call to get live audio stream.
 
@@ -86,3 +116,4 @@ Show the text to the caller and/or callee so they can see live transcription.
 
 - state machine
 - make outbound call
+- release to NPM
