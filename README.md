@@ -36,9 +36,9 @@ yarn browser
 
 ## Test
 
-### for node.js
-
 Make a phone call to the phone number you configured in `.env` file.
+
+### for node.js
 
 The app will auto pick up the call and save your voice to `audio.raw`
 
@@ -51,10 +51,6 @@ play -b 16 -e signed -c 1 -r 48000 audio.raw
 If `play` command is not available, please install sox: `brew install sox`.
 
 ### for browsers
-
-Open http://localhost:8080
-
-Make a phone call to the phone number you configured in `.env` file.
 
 The app will auto pick up the call and redirect your voice to an `<audio/>` HTML5 element.
 

@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "license": "MIT",
   "scripts": {
-    "server": "node -r dotenv-override-true/config -r @babel/register src/node.js",
-    "browser": "webpack-dev-server --progress --colors",
+    "server": "node -r dotenv-override-true/config -r @babel/register demos/node.js",
+    "browser": "webpack-dev-server --progress --colors --open",
     "test": "standard && jest",
     "prepush": "yarn test"
   },

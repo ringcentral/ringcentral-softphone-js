@@ -4,11 +4,11 @@ import dotenv from 'dotenv-override-true'
 
 const config = {
   entry: {
-    index: './src/browser.js'
+    index: './demos/browser.js'
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: 'src/index.html'
+      template: 'demos/index.html'
     }),
     new DefinePlugin({
       'process.env': JSON.stringify(dotenv.config().parsed)

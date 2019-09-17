@@ -123,20 +123,9 @@ class Softphone extends EventEmitter {
     const remoteRtcSd = new RTCSessionDescription({ type: 'offer', sdp })
     const rtcpc = new RTCPeerConnection({ iceServers: [{ urls: 'stun:74.125.194.127:19302' }] })
     rtcpc.addEventListener('track', e => {
-      // const audioSink = new RTCAudioSink(e.track)
-      // const audioPath = 'audio.raw'
-      // if (fs.existsSync(audioPath)) {
-      //   fs.unlinkSync(audioPath)
-      // }
-      // const stream = fs.createWriteStream(audioPath, { flags: 'a' })
-      // audioSink.ondata = data => {
-      //   stream.write(Buffer.from(data.samples.buffer))
-      // }
       const byeHandler = e => {
         if (e.data.startsWith('BYE ')) {
           this.ws.removeEventListener('message', byeHandler)
-          // audioSink.stop()
-          // stream.end()
         }
       }
       this.ws.addEventListener('message', byeHandler)

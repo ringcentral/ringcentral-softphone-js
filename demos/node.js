@@ -4,11 +4,11 @@ import fs from 'fs'
 import RingCentral from '@ringcentral/sdk'
 import { RTCSessionDescription, RTCPeerConnection, nonstandard } from 'wrtc'
 
-import { generateAuthorization } from './utils'
-import RcMessage from './RcMessage'
-import RequestSipMessage from './SipMessage/outbound/RequestSipMessage'
-import InboundSipMessage from './SipMessage/inbound/InboundSipMessage'
-import ResponseSipMessage from './SipMessage/outbound/ResponseSipMessage'
+import { generateAuthorization } from '../src/utils'
+import RcMessage from '../src/RcMessage'
+import RequestSipMessage from '../src/SipMessage/outbound/RequestSipMessage'
+import InboundSipMessage from '../src/SipMessage/inbound/InboundSipMessage'
+import ResponseSipMessage from '../src/SipMessage/outbound/ResponseSipMessage'
 
 const RTCAudioSink = nonstandard.RTCAudioSink
 
