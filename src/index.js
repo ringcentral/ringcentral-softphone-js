@@ -21,6 +21,26 @@ class Softphone extends EventEmitter {
     this.callerId = uuid()
   }
 
+  async handleSipMessage (inboundSipMessage) {
+    if (inboundSipMessage.subject.startsWith('INVITE sip:')) { // invite
+      await this.send(new ResponseSipMessage(inboundSipMessage, 100, 'Trying', {
+        To: inboundSipMessage.headers.To
+      }))
+      await this.send(new ResponseSipMessage(inboundSipMessage, 180, 'Ringing', {
+        To: `${inboundSipMessage.headers.To};tag=${this.toTag}`,
+        Contact: `<sip:${this.fakeDomain};transport=ws>`
+      }))
+      this.inviteSipMessage = inboundSipMessage
+      this.emit('invite', this.inviteSipMessage)
+    } else if (inboundSipMessage.subject.startsWith('BYE ')) { // bye
+      this.emit('bye', inboundSipMessage)
+    } else if (inboundSipMessage.subject.startsWith('MESSAGE ') && inboundSipMessage.body.includes(' Cmd="7"')) { // take over
+      await this.send(new ResponseSipMessage(inboundSipMessage, 200, 'OK', {
+        To: `${inboundSipMessage.headers.To};tag=${this.toTag}`
+      }))
+    }
+  }
+
   async send (sipMessage) {
     return new Promise((resolve, reject) => {
       if (sipMessage.subject.startsWith('SIP/2.0 ')) { // response message, no waiting for response from server side
@@ -28,22 +48,21 @@ class Softphone extends EventEmitter {
         resolve(undefined)
         return
       }
-      const messageHandler = e => {
-        const inboundSipMessage = InboundSipMessage.fromString(e.data)
+      const responseHandler = inboundSipMessage => {
         if (inboundSipMessage.headers.CSeq !== sipMessage.headers.CSeq) {
           return // message not for this send
         }
         if (inboundSipMessage.subject === 'SIP/2.0 100 Trying') {
           return // ignore
         }
+        this.off('sipMessage', responseHandler)
         if (inboundSipMessage.subject.startsWith('SIP/2.0 603 ')) {
           reject(inboundSipMessage)
           return
         }
-        this.ws.removeEventListener('message', messageHandler)
         resolve(inboundSipMessage)
       }
-      this.ws.addEventListener('message', messageHandler)
+      this.on('sipMessage', responseHandler)
       this.ws.send(sipMessage.toString())
     })
   }
@@ -55,10 +74,14 @@ class Softphone extends EventEmitter {
     const json = await r.json()
     this.sipInfo = json.sipInfo[0]
     this.ws = new WebSocket('wss://' + this.sipInfo.outboundProxy, 'sip')
+    this.ws.addEventListener('message', e => {
+      const inboundSipMessage = InboundSipMessage.fromString(e.data)
+      this.emit('sipMessage', inboundSipMessage)
+      this.handleSipMessage(inboundSipMessage)
+    })
     const openHandler = async e => {
       this.ws.removeEventListener('open', openHandler)
       const requestSipMessage = new RequestSipMessage(`REGISTER sip:${this.sipInfo.domain} SIP/2.0`, {
-        CSeq: '8145 REGISTER',
         'Call-ID': this.callerId,
         Contact: `<sip:${this.fakeEmail};transport=ws>;expires=600`,
         From: `<sip:${this.sipInfo.username}@${this.sipInfo.domain}>;tag=${this.fromTag}`,
@@ -72,27 +95,11 @@ class Softphone extends EventEmitter {
         requestSipMessage.headers.Authorization = generateAuthorization(this.sipInfo, 'REGISTER', nonce)
         inboundSipMessage = await this.send(requestSipMessage)
         if (inboundSipMessage.subject === 'SIP/2.0 200 OK') { // register successful
-          this.ws.addEventListener('message', this.inviteHandler)
+          this.registered = true
         }
       }
     }
     this.ws.addEventListener('open', openHandler)
-  }
-
-  async inviteHandler (e) {
-    const inboundSipMessage = InboundSipMessage.fromString(e.data)
-    if (inboundSipMessage.subject.startsWith('INVITE sip:')) {
-      this.ws.removeEventListener('message', this.inviteHandler) // todo: can accept one and only one call
-      await this.send(new ResponseSipMessage(inboundSipMessage, 100, 'Trying', {
-        To: inboundSipMessage.headers.To
-      }))
-      await this.send(new ResponseSipMessage(inboundSipMessage, 180, 'Ringing', {
-        To: `${inboundSipMessage.headers.To};tag=${this.toTag}`,
-        Contact: `<sip:${this.fakeDomain};transport=ws>`
-      }))
-      this.inviteSipMessage = inboundSipMessage
-      this.emit('Ringing', this.inviteSipMessage)
-    }
   }
 
   async answer () {
@@ -119,36 +126,19 @@ class Softphone extends EventEmitter {
       'Content-Type': 'x-rc/agent'
     }, newMsgStr)
     await this.send(requestSipMessage)
-
     const remoteRtcSd = new RTCSessionDescription({ type: 'offer', sdp })
     const rtcpc = new RTCPeerConnection({ iceServers: [{ urls: 'stun:74.125.194.127:19302' }] })
     rtcpc.addEventListener('track', e => {
-      const byeHandler = e => {
-        if (e.data.startsWith('BYE ')) {
-          this.ws.removeEventListener('message', byeHandler)
-        }
-      }
-      this.ws.addEventListener('message', byeHandler)
+      this.emit('track', e)
     })
     rtcpc.setRemoteDescription(remoteRtcSd)
     const localRtcSd = await rtcpc.createAnswer()
     rtcpc.setLocalDescription(localRtcSd)
-
     await this.send(new ResponseSipMessage(this.inviteSipMessage, 200, 'OK', {
       To: `${this.inviteSipMessage.headers.To};tag=${this.toTag}`,
       Contact: `<sip:${this.fakeEmail};transport=ws>`,
       'Content-Type': 'application/sdp'
     }, localRtcSd.sdp))
-    const takeOverHandler = async e => {
-      const inboundSipMessage = InboundSipMessage.fromString(e.data)
-      if (inboundSipMessage.subject.startsWith('MESSAGE ') && inboundSipMessage.body.includes(' Cmd="7"')) {
-        this.ws.removeEventListener('message', takeOverHandler)
-        await this.send(new ResponseSipMessage(inboundSipMessage, 200, 'OK', {
-          To: `${inboundSipMessage.headers.To};tag=${this.toTag}`
-        }))
-      }
-    }
-    this.ws.addEventListener('message', takeOverHandler)
   }
 
   async reject () {
