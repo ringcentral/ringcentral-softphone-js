@@ -1,5 +1,5 @@
 import HtmlWebpackPlugin from 'html-webpack-plugin'
-import { DefinePlugin } from 'webpack'
+import { HotModuleReplacementPlugin, DefinePlugin } from 'webpack'
 import dotenv from 'dotenv-override-true'
 
 const config = {
@@ -10,6 +10,7 @@ const config = {
     new HtmlWebpackPlugin({
       template: 'demos/index.html'
     }),
+    new HotModuleReplacementPlugin(),
     new DefinePlugin({
       'process.env': JSON.stringify(dotenv.config().parsed)
     })
