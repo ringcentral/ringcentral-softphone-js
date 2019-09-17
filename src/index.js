@@ -108,9 +108,6 @@ class Softphone extends EventEmitter {
         const nonce = wwwAuth.match(/, nonce="(.+?)"/)[1]
         requestSipMessage.headers.Authorization = generateAuthorization(this.sipInfo, 'REGISTER', nonce)
         inboundSipMessage = await this.send(requestSipMessage)
-        if (inboundSipMessage.subject === 'SIP/2.0 200 OK') { // register successful
-          this.registered = true
-        }
       }
     }
     this.ws.addEventListener('open', openHandler)
