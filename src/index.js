@@ -72,6 +72,7 @@ class Softphone extends EventEmitter {
       sipInfo: [{ transport: 'WSS' }]
     })
     const json = await r.json()
+    this.device = json.device
     this.sipInfo = json.sipInfo[0]
     this.ws = new WebSocket('wss://' + this.sipInfo.outboundProxy, 'sip')
     /* this is for debugging - start */
