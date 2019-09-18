@@ -7,7 +7,7 @@ import RequestSipMessage from './SipMessage/outbound/RequestSipMessage'
 import InboundSipMessage from './SipMessage/inbound/InboundSipMessage'
 import ResponseSipMessage from './SipMessage/outbound/ResponseSipMessage'
 import { generateAuthorization } from './utils'
-import RcMessage from './RcMessage'
+// import RcMessage from './RcMessage'
 
 class Softphone extends EventEmitter {
   constructor (rc) {
@@ -116,28 +116,28 @@ class Softphone extends EventEmitter {
 
   async answer () {
     const sdp = this.inviteSipMessage.body
-    const rcMessage = RcMessage.fromXml(this.inviteSipMessage.headers['P-rc'])
-    const newRcMessage = new RcMessage(
-      {
-        SID: rcMessage.Hdr.SID,
-        Req: rcMessage.Hdr.Req,
-        From: rcMessage.Hdr.To,
-        To: rcMessage.Hdr.From,
-        Cmd: 17
-      },
-      {
-        Cln: this.sipInfo.authorizationId
-      }
-    )
-    const newMsgStr = newRcMessage.toXml()
-    const requestSipMessage = new RequestSipMessage(`MESSAGE sip:${rcMessage.Hdr.From.replace('#', '%23')} SIP/2.0`, {
-      Via: `SIP/2.0/WSS ${this.fakeEmail};branch=${this.branch()}`,
-      To: `<sip:${rcMessage.Hdr.From.replace('#', '%23')}>`,
-      From: `<sip:${rcMessage.Hdr.To}@sip.ringcentral.com>;tag=${this.fromTag}`,
-      'Call-ID': this.callerId,
-      'Content-Type': 'x-rc/agent'
-    }, newMsgStr)
-    await this.send(requestSipMessage)
+    // const rcMessage = RcMessage.fromXml(this.inviteSipMessage.headers['P-rc'])
+    // const newRcMessage = new RcMessage(
+    //   {
+    //     SID: rcMessage.Hdr.SID,
+    //     Req: rcMessage.Hdr.Req,
+    //     From: rcMessage.Hdr.To,
+    //     To: rcMessage.Hdr.From,
+    //     Cmd: 17
+    //   },
+    //   {
+    //     Cln: this.sipInfo.authorizationId
+    //   }
+    // )
+    // const newMsgStr = newRcMessage.toXml()
+    // const requestSipMessage = new RequestSipMessage(`MESSAGE sip:${rcMessage.Hdr.From.replace('#', '%23')} SIP/2.0`, {
+    //   Via: `SIP/2.0/WSS ${this.fakeEmail};branch=${this.branch()}`,
+    //   To: `<sip:${rcMessage.Hdr.From.replace('#', '%23')}>`,
+    //   From: `<sip:${rcMessage.Hdr.To}@sip.ringcentral.com>;tag=${this.fromTag}`,
+    //   'Call-ID': this.callerId,
+    //   'Content-Type': 'x-rc/agent'
+    // }, newMsgStr)
+    // await this.send(requestSipMessage)
     const remoteRtcSd = new RTCSessionDescription({ type: 'offer', sdp })
     const rtcpc = new RTCPeerConnection({ iceServers: [{ urls: 'stun:74.125.194.127:19302' }] })
     rtcpc.addEventListener('track', e => {
