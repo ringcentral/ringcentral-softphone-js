@@ -43,7 +43,7 @@ softphone.on('INVITE', sipMessage => {
   softphone.on('track', e => {
     // phone call connected
     const { track, streams } = e
-    // you can audio data from track and streams
+    // you can get audio data from track and streams
   })
 })
 softphone.on('BYE', () => {
@@ -125,5 +125,5 @@ Show the text to the caller and/or callee so they can see live transcription.
 
 ## Todo
 
-- state machine
+- two way communication
 - make outbound call
