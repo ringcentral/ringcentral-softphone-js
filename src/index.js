@@ -7,7 +7,6 @@ import RequestSipMessage from './SipMessage/outbound/RequestSipMessage'
 import InboundSipMessage from './SipMessage/inbound/InboundSipMessage'
 import ResponseSipMessage from './SipMessage/outbound/ResponseSipMessage'
 import { generateAuthorization } from './utils'
-// import RcMessage from './RcMessage'
 
 class Softphone extends EventEmitter {
   constructor (rc) {
@@ -17,17 +16,13 @@ class Softphone extends EventEmitter {
     this.fakeEmail = uuid() + '@' + this.fakeDomain
     this.branch = () => 'z9hG4bK' + uuid()
     this.fromTag = uuid()
-    this.toTag = uuid()
     this.callerId = uuid()
   }
 
   async handleSipMessage (inboundSipMessage) {
     if (inboundSipMessage.subject.startsWith('INVITE sip:')) { // invite
-      await this.send(new ResponseSipMessage(inboundSipMessage, 100, 'Trying', {
-        To: inboundSipMessage.headers.To
-      }))
+      await this.send(new ResponseSipMessage(inboundSipMessage, 100, 'Trying'))
       await this.send(new ResponseSipMessage(inboundSipMessage, 180, 'Ringing', {
-        To: `${inboundSipMessage.headers.To};tag=${this.toTag}`,
         Contact: `<sip:${this.fakeDomain};transport=ws>`
       }))
       this.inviteSipMessage = inboundSipMessage
@@ -35,9 +30,7 @@ class Softphone extends EventEmitter {
     } else if (inboundSipMessage.subject.startsWith('BYE ')) { // bye
       this.emit('BYE', inboundSipMessage)
     } else if (inboundSipMessage.subject.startsWith('MESSAGE ') && inboundSipMessage.body.includes(' Cmd="7"')) { // take over
-      await this.send(new ResponseSipMessage(inboundSipMessage, 200, 'OK', {
-        To: `${inboundSipMessage.headers.To};tag=${this.toTag}`
-      }))
+      await this.send(new ResponseSipMessage(inboundSipMessage, 200, 'OK'))
     }
   }
 
@@ -116,28 +109,6 @@ class Softphone extends EventEmitter {
 
   async answer () {
     const sdp = this.inviteSipMessage.body
-    // const rcMessage = RcMessage.fromXml(this.inviteSipMessage.headers['P-rc'])
-    // const newRcMessage = new RcMessage(
-    //   {
-    //     SID: rcMessage.Hdr.SID,
-    //     Req: rcMessage.Hdr.Req,
-    //     From: rcMessage.Hdr.To,
-    //     To: rcMessage.Hdr.From,
-    //     Cmd: 17
-    //   },
-    //   {
-    //     Cln: this.sipInfo.authorizationId
-    //   }
-    // )
-    // const newMsgStr = newRcMessage.toXml()
-    // const requestSipMessage = new RequestSipMessage(`MESSAGE sip:${rcMessage.Hdr.From.replace('#', '%23')} SIP/2.0`, {
-    //   Via: `SIP/2.0/WSS ${this.fakeEmail};branch=${this.branch()}`,
-    //   To: `<sip:${rcMessage.Hdr.From.replace('#', '%23')}>`,
-    //   From: `<sip:${rcMessage.Hdr.To}@sip.ringcentral.com>;tag=${this.fromTag}`,
-    //   'Call-ID': this.callerId,
-    //   'Content-Type': 'x-rc/agent'
-    // }, newMsgStr)
-    // await this.send(requestSipMessage)
     const remoteRtcSd = new RTCSessionDescription({ type: 'offer', sdp })
     const rtcpc = new RTCPeerConnection({ iceServers: [{ urls: 'stun:74.125.194.127:19302' }] })
     rtcpc.addEventListener('track', e => {
@@ -147,7 +118,6 @@ class Softphone extends EventEmitter {
     const localRtcSd = await rtcpc.createAnswer()
     rtcpc.setLocalDescription(localRtcSd)
     await this.send(new ResponseSipMessage(this.inviteSipMessage, 200, 'OK', {
-      To: `${this.inviteSipMessage.headers.To};tag=${this.toTag}`,
       Contact: `<sip:${this.fakeEmail};transport=ws>`,
       'Content-Type': 'application/sdp'
     }, localRtcSd.sdp))
