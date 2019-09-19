@@ -37,7 +37,18 @@ const rc = new RingCentral(...)
 await rc.login(...)
 const softphone = new Softphone(rc)
 await softphone.register()
-// to be continued
+await rc.logout()
+softphone.on('INVITE', sipMessage => {
+  softphone.answer()
+  softphone.on('track', e => {
+    // phone call connected
+    const { track, streams } = e
+    // you can audio data from track and streams
+  })
+})
+softphone.on('BYE', () => {
+  // phone call ended
+})
 ```
 
 
@@ -116,4 +127,3 @@ Show the text to the caller and/or callee so they can see live transcription.
 
 - state machine
 - make outbound call
-- release to NPM
