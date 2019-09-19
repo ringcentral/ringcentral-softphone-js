@@ -1,10 +1,5 @@
 # RingCentral Softphone SDK for JavaScript
 
-## Experimental
-
-This project is still in its early stage. It is not ready for production yet!
-
-
 ## What are the differences between ringcentral-web-phone and this project?
 
 [ringcentral-web-phone](https://github.com/ringcentral/ringcentral-web-phone) is designed for client side and only works with browsers.
