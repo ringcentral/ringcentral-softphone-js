@@ -3,6 +3,7 @@ import fs from 'fs'
 import { nonstandard } from 'wrtc'
 
 import Softphone from '../src/index'
+import stream from '../src/microphone'
 
 const { RTCAudioSink } = nonstandard
 
@@ -28,8 +29,7 @@ const rc = new RingCentral({
   if (fs.existsSync(audioPath)) {
     fs.unlinkSync(audioPath)
   }
-  softphone.on('INVITE', sipMessage => {
-    softphone.answer()
+  softphone.on('INVITE', async sipMessage => {
     softphone.on('track', e => {
       audioSink = new RTCAudioSink(e.track)
       audioStream = fs.createWriteStream(audioPath, { flags: 'a' })
@@ -37,6 +37,7 @@ const rc = new RingCentral({
         audioStream.write(Buffer.from(data.samples.buffer))
       }
     })
+    await softphone.answer(stream)
   })
   softphone.on('BYE', () => {
     audioSink.stop()
