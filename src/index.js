@@ -107,16 +107,20 @@ class Softphone extends EventEmitter {
     this.ws.addEventListener('open', openHandler)
   }
 
-  async answer () {
+  async answer (inputAudioStream = undefined) {
     const sdp = this.inviteSipMessage.body
     const remoteRtcSd = new RTCSessionDescription({ type: 'offer', sdp })
-    const rtcpc = new RTCPeerConnection({ iceServers: [{ urls: 'stun:74.125.194.127:19302' }] })
-    rtcpc.addEventListener('track', e => {
+    const pc1 = new RTCPeerConnection({ iceServers: [{ urls: 'stun:74.125.194.127:19302' }] })
+    pc1.addEventListener('track', e => {
       this.emit('track', e)
     })
-    rtcpc.setRemoteDescription(remoteRtcSd)
-    const localRtcSd = await rtcpc.createAnswer()
-    rtcpc.setLocalDescription(localRtcSd)
+    pc1.setRemoteDescription(remoteRtcSd)
+    if (inputAudioStream) {
+      const track = inputAudioStream.getAudioTracks()[0]
+      pc1.addTrack(track, inputAudioStream)
+    }
+    const localRtcSd = await pc1.createAnswer()
+    pc1.setLocalDescription(localRtcSd)
     await this.send(new ResponseSipMessage(this.inviteSipMessage, 200, 'OK', {
       Contact: `<sip:${this.fakeEmail};transport=ws>`,
       'Content-Type': 'application/sdp'

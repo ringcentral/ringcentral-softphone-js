@@ -17,14 +17,14 @@ const rc = new RingCentral({
   const softphone = new Softphone(rc)
   await softphone.register()
   await rc.logout() // rc is no longer needed
-
+  const inputAudioStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false })
   const audioElement = document.getElementById('audio')
-  softphone.on('INVITE', sipMessage => {
-    softphone.answer()
+  softphone.on('INVITE', async sipMessage => {
     softphone.on('track', e => {
       audioElement.srcObject = e.streams[0]
       setTimeout(() => audioElement.play(), 100)
     })
+    await softphone.answer(inputAudioStream)
   })
   softphone.on('BYE', () => {
     audioElement.pause()
