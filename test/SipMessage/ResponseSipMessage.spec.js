@@ -1,4 +1,6 @@
 /* eslint-env jest */
+import * as R from 'ramda'
+
 import ResponseSipMessage from '../../src/SipMessage/outbound/ResponseSipMessage'
 import InboundSipMessage from '../../src/SipMessage/inbound/InboundSipMessage'
 import { version } from '../../package.json'
@@ -53,36 +55,31 @@ a=candidate:mQ0FXtgcx3Jp54R9 2 UDP 2130706430 104.245.57.182 37217 typ host
 
 describe('ResponseSipMessage', () => {
   test('Trying', async () => {
-    const sipMessage = new ResponseSipMessage(inboundInviteMessage, 100, 'Trying', {
-      To: inboundInviteMessage.headers.To
-    })
+    const sipMessage = new ResponseSipMessage(inboundInviteMessage, 100, 'Trying')
     expect(sipMessage.subject).toBe('SIP/2.0 100 Trying')
-    expect(sipMessage.headers).toEqual({
+    expect(R.dissoc('To', sipMessage.headers)).toEqual({
       'User-Agent': `ringcentral-softphone-js/${version}`,
       Supported: 'outbound',
       CSeq: '218658393 INVITE',
       'Call-ID': '7661f03e2b374012b8cfe8e7f1442261',
       From: '"WIRELESS CALLER" <sip:+16506666666@104.245.57.165>;tag=10.13.22.242-5070-26c2b3fce8a242',
       Via: 'SIP/2.0/WSS 104.245.57.165:8083;rport;branch=z9hG4bK1HlzGT-2WxVW2',
-      To: '"WIRELESS CALLER" <sip:17203861294*115@50.237.72.154>',
       'Content-Length': 0
     })
   })
 
   test('Ringing', async () => {
     const sipMessage = new ResponseSipMessage(inboundInviteMessage, 180, 'Ringing', {
-      To: inboundInviteMessage.headers.To + ';tag=9bfeee30-dea5-4069-be7d-b43b8a14a05a',
       Contact: '<sip:f00b012e-4b95-45dc-a530-27e04537b158.invalid;transport=ws>'
     })
     expect(sipMessage.subject).toBe('SIP/2.0 180 Ringing')
-    expect(sipMessage.headers).toEqual({
+    expect(R.dissoc('To', sipMessage.headers)).toEqual({
       'User-Agent': `ringcentral-softphone-js/${version}`,
       Supported: 'outbound',
       CSeq: '218658393 INVITE',
       'Call-ID': '7661f03e2b374012b8cfe8e7f1442261',
       From: '"WIRELESS CALLER" <sip:+16506666666@104.245.57.165>;tag=10.13.22.242-5070-26c2b3fce8a242',
       Via: 'SIP/2.0/WSS 104.245.57.165:8083;rport;branch=z9hG4bK1HlzGT-2WxVW2',
-      To: '"WIRELESS CALLER" <sip:17203861294*115@50.237.72.154>;tag=9bfeee30-dea5-4069-be7d-b43b8a14a05a',
       Contact: '<sip:f00b012e-4b95-45dc-a530-27e04537b158.invalid;transport=ws>',
       'Content-Length': 0
     })
