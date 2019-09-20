@@ -1,11 +1,13 @@
 import RingCentral from '@ringcentral/sdk'
 import fs from 'fs'
-import { nonstandard } from 'wrtc'
+import { nonstandard, MediaStream } from 'wrtc'
+import RTCAudioSource from 'node-webrtc-audio-source'
 
 import Softphone from '../src/index'
-import stream from '../src/microphone'
 
 const { RTCAudioSink } = nonstandard
+
+const rtcAudioSource = new RTCAudioSource()
 
 const rc = new RingCentral({
   server: process.env.RINGCENTRAL_SERVER_URL,
@@ -37,9 +39,14 @@ const rc = new RingCentral({
         audioStream.write(Buffer.from(data.samples.buffer))
       }
     })
+    const stream = new MediaStream()
+    const track = rtcAudioSource.createTrack()
+    stream.addTrack(track)
     await softphone.answer(stream)
+    rtcAudioSource.start()
   })
   softphone.on('BYE', () => {
+    rtcAudioSource.stop()
     audioSink.stop()
     audioStream.end()
   })

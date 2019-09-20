@@ -33,8 +33,11 @@ await rc.login(...)
 const softphone = new Softphone(rc)
 await softphone.register()
 await rc.logout()
+
+// const stream = <input-audio-stream-from-microphone>
+
 softphone.on('INVITE', sipMessage => {
-  softphone.answer()
+  softphone.answer(stream)
   softphone.on('track', e => {
     // phone call connected
     const { track, streams } = e
@@ -120,5 +123,4 @@ Show the text to the caller and/or callee so they can see live transcription.
 
 ## Todo
 
-- two way communication
 - make outbound call

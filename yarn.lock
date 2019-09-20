@@ -5190,6 +5190,11 @@ node-releases@^1.1.29:
   dependencies:
     semver "^5.3.0"
 
+node-webrtc-audio-source@^0.1.1:
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/node-webrtc-audio-source/-/node-webrtc-audio-source-0.1.1.tgz#f2f70b0aeed40026aa080776467eaa014033d5e5"
+  integrity sha512-980XqxTwVOdwMxwL+OVjfmA4/lG7gEfv1jhJ/+QFzUVZ46qm1q9JV34+7/9FR59L1uaDAkX1z+rIijHJ6jn6AQ==
+
 nopt@^4.0.1:
   version "4.0.1"
   resolved "https://registry.yarnpkg.com/nopt/-/nopt-4.0.1.tgz#d0d4685afd5415193c8c7505602d0d17cd64474d"
