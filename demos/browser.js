@@ -22,11 +22,11 @@ const rc = new RingCentral({
   softphone.on('INVITE', async sipMessage => {
     softphone.on('track', e => {
       audioElement.srcObject = e.streams[0]
+      softphone.on('BYE', () => {
+        audioElement.srcObject = null
+      })
     })
     const inputAudioStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false })
     softphone.answer(inputAudioStream)
-  })
-  softphone.on('BYE', () => {
-    audioElement.srcObject = null
   })
 })()
