@@ -28,12 +28,7 @@ const rc = new RingCentral({
     const inputAudioStream = await mediaDevices.getUserMedia({ audio: true, video: false })
     softphone.answer(inputAudioStream)
     softphone.on('track', e => {
-      const speaker = new Speaker({
-        channels: 1,
-        bitDepth: 16,
-        sampleRate: 48000,
-        signed: true
-      })
+      const speaker = new Speaker({ channels: 1, bitDepth: 16, sampleRate: 48000, signed: true })
       const readable = new Readable()
       readable._read = () => {}
       readable.pipe(speaker)
