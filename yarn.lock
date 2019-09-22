@@ -1881,6 +1881,11 @@ combined-stream@^1.0.6, combined-stream@~1.0.6:
   dependencies:
     delayed-stream "~1.0.0"
 
+command-exists@^1.2.8:
+  version "1.2.8"
+  resolved "https://registry.yarnpkg.com/command-exists/-/command-exists-1.2.8.tgz#715acefdd1223b9c9b37110a149c6392c2852291"
+  integrity sha512-PM54PkseWbiiD/mMsbvW351/u+dafwTJ0ye2qB60G1aGQP9j3xK2gmMDc+R34L3nDtx4qMCitXT75mkbkGJDLw==
+
 commander@2.17.x:
   version "2.17.1"
   resolved "https://registry.yarnpkg.com/commander/-/commander-2.17.1.tgz#bd77ab7de6de94205ceacc72f1716d29f20a77bf"
@@ -5180,10 +5185,19 @@ node-releases@^1.1.29:
   dependencies:
     semver "^5.3.0"
 
-node-webrtc-audio-source@^0.2.0:
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/node-webrtc-audio-source/-/node-webrtc-audio-source-0.2.0.tgz#3589a46318c56eba7ddfc02cd61c7d7b2a760e53"
-  integrity sha512-gt9KUsmbCzaPCKEskDkpvflEY+dzjU3giorkhoFfLrH6eTqcPCrD2zCyfMHkum49hJR7GI2rsE5eGIabhbNQGQ==
+node-webrtc-audio-source@^0.3.0:
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/node-webrtc-audio-source/-/node-webrtc-audio-source-0.3.0.tgz#a96799eb648324e682c1be10c264969998e8106d"
+  integrity sha512-tOLjENDfQco4gObrnsyXVVfrBQlY/qMklCIB3o74L0KEQCfmhtNvpi6ikjztB+M3h33l9Xn6+rB25AGcaZYX2w==
+  dependencies:
+    command-exists "^1.2.8"
+
+node-webrtc-media-devices@^0.1.2:
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/node-webrtc-media-devices/-/node-webrtc-media-devices-0.1.2.tgz#9b82af464e7c0a8b6b6beaef36d9ba68c410fee1"
+  integrity sha512-1wDr8AZQuZlqbHTnc3TgrfoZh+MJITPYvtqmaj5A+P1pl9TLUb69Pv1n2zf/kL5fSGOGTJEL0gU0T3dF1JFgJQ==
+  dependencies:
+    node-webrtc-audio-source "^0.3.0"
 
 nopt@^4.0.1:
   version "4.0.1"
