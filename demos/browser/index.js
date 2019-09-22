@@ -1,6 +1,6 @@
 import RingCentral from '@ringcentral/sdk'
 
-import Softphone from '../src/index'
+import Softphone from '../../src/index'
 
 const rc = new RingCentral({
   server: process.env.RINGCENTRAL_SERVER_URL,

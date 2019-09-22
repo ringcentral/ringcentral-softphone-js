@@ -4,11 +4,11 @@ import dotenv from 'dotenv-override-true'
 
 const config = {
   entry: {
-    index: './demos/browser.js'
+    index: './demos/browser/index.js'
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: 'demos/index.html'
+      template: 'demos/browser/index.html'
     }),
     new HotModuleReplacementPlugin(),
     new DefinePlugin({

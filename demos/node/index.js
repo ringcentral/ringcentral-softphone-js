@@ -4,7 +4,7 @@ import mediaDevices from 'node-webrtc-media-devices'
 import Speaker from 'speaker'
 import { Readable } from 'stream'
 
-import Softphone from '../src/index'
+import Softphone from '../../src/index'
 
 const { RTCAudioSink } = nonstandard
 

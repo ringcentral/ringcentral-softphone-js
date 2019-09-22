@@ -24,8 +24,8 @@ because node.js by default doesn't support WebSocket & WebRTC.
 
 ## Usage
 
-- for node.js, check [this demo](./demos/node.js)
-- for browser, check [this demo](./demos/browser.js)
+- for node.js, check [here](./demos/node)
+- for browser, check [here](./demos/browser)
 
 
 ## Demos
