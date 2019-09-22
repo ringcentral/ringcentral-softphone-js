@@ -1,4 +1,4 @@
-import OutboundSipMessage from './OutboundSipMessage'
+import OutboundSipMessage from './outbound-sip-message'
 
 let cseq = Math.floor(Math.random() * 10000)
 

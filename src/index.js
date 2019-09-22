@@ -3,9 +3,9 @@ import WebSocket from 'isomorphic-ws'
 import EventEmitter from 'events'
 import { RTCSessionDescription, RTCPeerConnection } from 'isomorphic-webrtc'
 
-import RequestSipMessage from './SipMessage/outbound/RequestSipMessage'
-import InboundSipMessage from './SipMessage/inbound/InboundSipMessage'
-import ResponseSipMessage from './SipMessage/outbound/ResponseSipMessage'
+import RequestSipMessage from './sip-message/outbound/request-sip-message'
+import InboundSipMessage from './sip-message/inbound/inbound-sip-message'
+import ResponseSipMessage from './sip-message/outbound/response-sip-message'
 import { generateAuthorization } from './utils'
 
 class Softphone extends EventEmitter {

@@ -1,8 +1,8 @@
 /* eslint-env jest */
 import * as R from 'ramda'
 
-import ResponseSipMessage from '../../src/SipMessage/outbound/ResponseSipMessage'
-import InboundSipMessage from '../../src/SipMessage/inbound/InboundSipMessage'
+import ResponseSipMessage from '../../src/sip-message/outbound/response-sip-message'
+import InboundSipMessage from '../../src/sip-message/inbound/inbound-sip-message'
 import { version } from '../../package.json'
 
 const inboundInviteMessage = InboundSipMessage.fromString(`INVITE sip:db228b2d-10a2-4a61-aeb1-3e5697c4348e@f00b012e-4b95-45dc-a530-27e04537b158.invalid;transport=ws SIP/2.0

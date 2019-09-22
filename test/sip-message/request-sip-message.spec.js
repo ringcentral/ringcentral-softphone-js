@@ -1,7 +1,7 @@
 /* eslint-env jest */
 import * as R from 'ramda'
 
-import RequestSipMessage from '../../src/SipMessage/outbound/RequestSipMessage'
+import RequestSipMessage from '../../src/sip-message/outbound/request-sip-message'
 import { version } from '../../package.json'
 
 describe('RequestSipMessage', () => {

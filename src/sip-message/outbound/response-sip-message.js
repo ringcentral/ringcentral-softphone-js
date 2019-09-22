@@ -1,6 +1,6 @@
 import uuid from 'uuid/v4'
 
-import OutboundSipMessage from './OutboundSipMessage'
+import OutboundSipMessage from './outbound-sip-message'
 
 const toTag = uuid()
 

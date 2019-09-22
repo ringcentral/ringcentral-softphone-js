@@ -1,4 +1,4 @@
-import SipMessage from '../SipMessage'
+import SipMessage from '../sip-message'
 import { version } from '../../../package.json'
 
 class OutboundSipMessage extends SipMessage {
