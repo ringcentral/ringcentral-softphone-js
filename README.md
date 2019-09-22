@@ -24,30 +24,8 @@ because node.js by default doesn't support WebSocket & WebRTC.
 
 ## Usage
 
-```js
-import RingCentral from '@ringcentral/sdk'
-import Softphone from 'ringcentral-softphpone'
-
-const rc = new RingCentral(...)
-await rc.login(...)
-const softphone = new Softphone(rc)
-await softphone.register()
-await rc.logout()
-
-// const stream = <input-audio-stream-from-microphone>
-
-softphone.on('INVITE', sipMessage => {
-  softphone.on('track', e => {
-    // phone call connected
-    const { track, streams } = e
-    // you can get audio data from track and streams
-  })
-  softphone.answer(stream)
-})
-softphone.on('BYE', () => {
-  // phone call ended
-})
-```
+- for node.js, check [this demo](./demos/node.js)
+- for browser, check [this demo](./demos/browser.js)
 
 
 ## Demos
@@ -61,36 +39,19 @@ cp .env.sample .env
 
 Edit `.env` file to specify credentials.
 
-Note: please do NOT get rid of `NODE_TLS_REJECT_UNAUTHORIZED=0` in `.env` file. It is required for WebSocket to work without a TLS certificate installed on your laptop.
-You may remove it however if your app target browsers instead of node.js.
-
 
 ### Run
 
-For node.js:
-
-```
-yarn server
-```
-
-For browsers:
-
-```
-yarn browser
-```
+- for node.js `yarn server`
+- for browser `yarn browser`
 
 
 ### Test
 
 Make a phone call to the phone number you configured in `.env` file.
 
-#### for node.js
-
-The app will auto pick up the call and redirect your voice to speaker.
-
-#### for browsers
-
-The app will auto pick up the call and redirect your voice to an `<audio/>` HTML5 element.
+- for node.js, the app will auto pick up the call and redirect your voice to speaker.
+- for browser, the app will auto pick up the call and redirect your voice to an `<audio/>` HTML5 element.
 
 
 ## Interesting Usage cases

@@ -67,7 +67,7 @@ class Softphone extends EventEmitter {
     const json = await r.json()
     this.device = json.device
     this.sipInfo = json.sipInfo[0]
-    this.ws = new WebSocket('wss://' + this.sipInfo.outboundProxy, 'sip')
+    this.ws = new WebSocket('wss://' + this.sipInfo.outboundProxy, 'sip', { rejectUnauthorized: false })
     /* this is for debugging - start */
     this.ws.addEventListener('message', e => {
       console.log('\n***** WebSocket Got - start *****')
