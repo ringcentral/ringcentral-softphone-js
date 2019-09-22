@@ -3276,9 +3276,9 @@ glob-parent@^3.1.0:
     path-dirname "^1.0.0"
 
 glob-parent@^5.0.0:
-  version "5.0.0"
-  resolved "https://registry.yarnpkg.com/glob-parent/-/glob-parent-5.0.0.tgz#1dc99f0f39b006d3e92c2c284068382f0c20e954"
-  integrity sha512-Z2RwiujPRGluePM6j699ktJYxmPpJKCfpGA13jz2hmFZC7gKetzrWvg5KN3+OsIFmydGyZ1AVwERCq1w/ZZwRg==
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/glob-parent/-/glob-parent-5.1.0.tgz#5f4c1d1e748d30cd73ad2944b3577a81b081e8c2"
+  integrity sha512-qjtRgnIVmOfnKUE3NJAQEdk+lKrxfw8t5ke7SXtfMTHcjsBfOfWXCQfdb30zfDoZQ2IRSIiidmjtbHZPZ++Ihw==
   dependencies:
     is-glob "^4.0.1"
 
@@ -5185,19 +5185,19 @@ node-releases@^1.1.29:
   dependencies:
     semver "^5.3.0"
 
-node-webrtc-audio-source@^0.3.0:
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/node-webrtc-audio-source/-/node-webrtc-audio-source-0.3.0.tgz#a96799eb648324e682c1be10c264969998e8106d"
-  integrity sha512-tOLjENDfQco4gObrnsyXVVfrBQlY/qMklCIB3o74L0KEQCfmhtNvpi6ikjztB+M3h33l9Xn6+rB25AGcaZYX2w==
+node-webrtc-audio-source@^0.3.2:
+  version "0.3.2"
+  resolved "https://registry.yarnpkg.com/node-webrtc-audio-source/-/node-webrtc-audio-source-0.3.2.tgz#f07420f62a359db5d69904a851d542c95071b8e6"
+  integrity sha512-18U2E9cuT82ryGVludjCHdVgDvmwqhg8PS6ob/F6p3/XLSVkTypMBLZzfXHa80nNU1SsB35fVOoguJB+72B+vA==
   dependencies:
     command-exists "^1.2.8"
 
-node-webrtc-media-devices@^0.1.2:
-  version "0.1.2"
-  resolved "https://registry.yarnpkg.com/node-webrtc-media-devices/-/node-webrtc-media-devices-0.1.2.tgz#9b82af464e7c0a8b6b6beaef36d9ba68c410fee1"
-  integrity sha512-1wDr8AZQuZlqbHTnc3TgrfoZh+MJITPYvtqmaj5A+P1pl9TLUb69Pv1n2zf/kL5fSGOGTJEL0gU0T3dF1JFgJQ==
+node-webrtc-media-devices@^0.1.3:
+  version "0.1.3"
+  resolved "https://registry.yarnpkg.com/node-webrtc-media-devices/-/node-webrtc-media-devices-0.1.3.tgz#9e4351ee35553ad5b4bac689ba1a634df6816a3e"
+  integrity sha512-zE1SpOWaolfyGHSWdFi5Q2184YcS451j2DP+T6r0og2NykOIaxPDboREkzHnHr0GVRsFDmamN6hl/hjOOOP5Lg==
   dependencies:
-    node-webrtc-audio-source "^0.3.0"
+    node-webrtc-audio-source "^0.3.2"
 
 nopt@^4.0.1:
   version "4.0.1"
