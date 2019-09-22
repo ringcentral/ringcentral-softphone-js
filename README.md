@@ -86,15 +86,7 @@ Make a phone call to the phone number you configured in `.env` file.
 
 #### for node.js
 
-The app will auto pick up the call and save your voice to `audio.raw`
-
-You can play `audio.raw` file by command line
-
-```
-play -b 16 -e signed -c 1 -r 48000 audio.raw
-```
-
-If `play` command is not available, please install sox: `brew install sox`.
+The app will auto pick up the call and redirect your voice to speaker.
 
 #### for browsers
 
