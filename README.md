@@ -37,12 +37,12 @@ await rc.logout()
 // const stream = <input-audio-stream-from-microphone>
 
 softphone.on('INVITE', sipMessage => {
-  softphone.answer(stream)
   softphone.on('track', e => {
     // phone call connected
     const { track, streams } = e
     // you can get audio data from track and streams
   })
+  softphone.answer(stream)
 })
 softphone.on('BYE', () => {
   // phone call ended

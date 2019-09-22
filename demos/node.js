@@ -37,12 +37,10 @@ const rc = new RingCentral({
         audioStream.write(Buffer.from(data.samples.buffer))
       }
     })
-    const inputAudioStream = mediaDevices.getUserMedia({ audio: true, video: false })
-    await softphone.answer(inputAudioStream)
-    mediaDevices.startAudio()
+    const inputAudioStream = await mediaDevices.getUserMedia({ audio: true, video: false })
+    softphone.answer(inputAudioStream)
   })
   softphone.on('BYE', () => {
-    mediaDevices.stopAudio()
     audioSink.stop()
     audioStream.end()
   })
