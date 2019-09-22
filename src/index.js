@@ -110,17 +110,17 @@ class Softphone extends EventEmitter {
   async answer (inputAudioStream = undefined) {
     const sdp = this.inviteSipMessage.body
     const remoteRtcSd = new RTCSessionDescription({ type: 'offer', sdp })
-    const pc1 = new RTCPeerConnection({ iceServers: [{ urls: 'stun:74.125.194.127:19302' }] })
-    pc1.addEventListener('track', e => {
+    const peerConnection = new RTCPeerConnection({ iceServers: [{ urls: 'stun:74.125.194.127:19302' }] })
+    peerConnection.addEventListener('track', e => {
       this.emit('track', e)
     })
-    pc1.setRemoteDescription(remoteRtcSd)
+    peerConnection.setRemoteDescription(remoteRtcSd)
     if (inputAudioStream) {
       const track = inputAudioStream.getAudioTracks()[0]
-      pc1.addTrack(track, inputAudioStream)
+      peerConnection.addTrack(track, inputAudioStream)
     }
-    const localRtcSd = await pc1.createAnswer()
-    pc1.setLocalDescription(localRtcSd)
+    const localRtcSd = await peerConnection.createAnswer()
+    peerConnection.setLocalDescription(localRtcSd)
     await this.send(new ResponseSipMessage(this.inviteSipMessage, 200, 'OK', {
       Contact: `<sip:${this.fakeEmail};transport=ws>`,
       'Content-Type': 'application/sdp'
