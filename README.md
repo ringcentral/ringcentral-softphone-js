@@ -76,4 +76,5 @@ Show the text to the caller and/or callee so they can see live transcription.
 
 ## Todo
 
+- hang up
 - make outbound call
