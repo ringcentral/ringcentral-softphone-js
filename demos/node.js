@@ -1,7 +1,8 @@
 import RingCentral from '@ringcentral/sdk'
-import fs from 'fs'
 import { nonstandard } from 'wrtc'
 import mediaDevices from 'node-webrtc-media-devices'
+import Speaker from 'speaker'
+import { Readable } from 'stream'
 
 import Softphone from '../src/index'
 
@@ -24,17 +25,21 @@ const rc = new RingCentral({
   await rc.logout() // rc is no longer needed
 
   let audioSink
-  let audioStream
-  const audioPath = 'audio.raw'
-  if (fs.existsSync(audioPath)) {
-    fs.unlinkSync(audioPath)
-  }
+  let readable
   softphone.on('INVITE', async sipMessage => {
     softphone.on('track', e => {
       audioSink = new RTCAudioSink(e.track)
-      audioStream = fs.createWriteStream(audioPath, { flags: 'a' })
+      const speaker = new Speaker({
+        channels: 1,
+        bitDepth: 16,
+        sampleRate: 48000,
+        signed: true
+      })
+      readable = new Readable()
+      readable._read = () => {}
+      readable.pipe(speaker)
       audioSink.ondata = data => {
-        audioStream.write(Buffer.from(data.samples.buffer))
+        readable.push(Buffer.from(data.samples.buffer))
       }
     })
     const inputAudioStream = await mediaDevices.getUserMedia({ audio: true, video: false })
@@ -42,6 +47,6 @@ const rc = new RingCentral({
   })
   softphone.on('BYE', () => {
     audioSink.stop()
-    audioStream.end()
+    readable.push(null)
   })
 })()
