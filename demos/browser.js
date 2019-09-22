@@ -17,6 +17,7 @@ const rc = new RingCentral({
   const softphone = new Softphone(rc)
   await softphone.register()
   await rc.logout() // rc is no longer needed
+
   const audioElement = document.getElementById('audio')
   softphone.on('INVITE', async sipMessage => {
     softphone.on('track', e => {

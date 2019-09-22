@@ -28,7 +28,6 @@ const rc = new RingCentral({
     const inputAudioStream = await mediaDevices.getUserMedia({ audio: true, video: false })
     softphone.answer(inputAudioStream)
     softphone.on('track', e => {
-      const audioSink = new RTCAudioSink(e.track)
       const speaker = new Speaker({
         channels: 1,
         bitDepth: 16,
@@ -38,6 +37,7 @@ const rc = new RingCentral({
       const readable = new Readable()
       readable._read = () => {}
       readable.pipe(speaker)
+      const audioSink = new RTCAudioSink(e.track)
       audioSink.ondata = data => {
         readable.push(Buffer.from(data.samples.buffer))
       }
