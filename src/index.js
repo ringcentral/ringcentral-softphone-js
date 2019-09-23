@@ -6,7 +6,7 @@ import { RTCSessionDescription, RTCPeerConnection } from 'isomorphic-webrtc'
 import RequestSipMessage from './sip-message/outbound/request-sip-message'
 import InboundSipMessage from './sip-message/inbound/inbound-sip-message'
 import ResponseSipMessage from './sip-message/outbound/response-sip-message'
-import { generateAuthorization } from './utils'
+import { generateAuthorization, branch } from './utils'
 
 class Softphone extends EventEmitter {
   constructor (rc) {
@@ -14,22 +14,20 @@ class Softphone extends EventEmitter {
     this.rc = rc
     this.fakeDomain = uuid() + '.invalid'
     this.fakeEmail = uuid() + '@' + this.fakeDomain
-    this.branch = () => 'z9hG4bK' + uuid()
     this.fromTag = uuid()
     this.callerId = uuid()
   }
 
   async handleSipMessage (inboundSipMessage) {
     if (inboundSipMessage.subject.startsWith('INVITE sip:')) { // invite
-      await this.send(new ResponseSipMessage(inboundSipMessage, 180, {
+      await this.response(inboundSipMessage, 180, {
         Contact: `<sip:${this.fakeDomain};transport=ws>`
-      }))
-      this.inviteSipMessage = inboundSipMessage
-      this.emit('INVITE', this.inviteSipMessage)
+      })
+      this.emit('INVITE', inboundSipMessage)
     } else if (inboundSipMessage.subject.startsWith('BYE ')) { // bye
       this.emit('BYE', inboundSipMessage)
     } else if (inboundSipMessage.subject.startsWith('MESSAGE ') && inboundSipMessage.body.includes(' Cmd="7"')) { // take over
-      await this.send(new ResponseSipMessage(inboundSipMessage, 200))
+      await this.response(inboundSipMessage, 200)
     }
   }
 
@@ -48,7 +46,7 @@ class Softphone extends EventEmitter {
           return // ignore
         }
         this.off('sipMessage', responseHandler)
-        if (inboundSipMessage.subject.startsWith('SIP/2.0 603 ')) {
+        if (inboundSipMessage.subject.startsWith('SIP/2.0 5') || inboundSipMessage.subject.startsWith('SIP/2.0 6')) {
           reject(inboundSipMessage)
           return
         }
@@ -57,6 +55,10 @@ class Softphone extends EventEmitter {
       this.on('sipMessage', responseHandler)
       this.ws.send(sipMessage.toString())
     })
+  }
+
+  async response (inboundSipMessage, responseCode, headers = {}, body = '') {
+    await this.send(new ResponseSipMessage(inboundSipMessage, responseCode, headers, body))
   }
 
   async register () {
@@ -93,7 +95,7 @@ class Softphone extends EventEmitter {
         Contact: `<sip:${this.fakeEmail};transport=ws>;expires=600`,
         From: `<sip:${this.sipInfo.username}@${this.sipInfo.domain}>;tag=${this.fromTag}`,
         To: `<sip:${this.sipInfo.username}@${this.sipInfo.domain}>`,
-        Via: `SIP/2.0/WSS ${this.fakeDomain};branch=${this.branch()}`
+        Via: `SIP/2.0/WSS ${this.fakeDomain};branch=${branch()}`
       })
       let inboundSipMessage = await this.send(requestSipMessage)
       const wwwAuth = inboundSipMessage.headers['Www-Authenticate']
@@ -106,8 +108,8 @@ class Softphone extends EventEmitter {
     this.ws.addEventListener('open', openHandler)
   }
 
-  async answer (inputAudioStream = undefined) {
-    const sdp = this.inviteSipMessage.body
+  async answer (inviteSipMessage, inputAudioStream = undefined) {
+    const sdp = inviteSipMessage.body
     const remoteRtcSd = new RTCSessionDescription({ type: 'offer', sdp })
     const peerConnection = new RTCPeerConnection({ iceServers: [{ urls: 'stun:74.125.194.127:19302' }] })
     peerConnection.addEventListener('track', e => {
@@ -120,14 +122,14 @@ class Softphone extends EventEmitter {
     }
     const localRtcSd = await peerConnection.createAnswer()
     peerConnection.setLocalDescription(localRtcSd)
-    await this.send(new ResponseSipMessage(this.inviteSipMessage, 200, {
+    await this.response(inviteSipMessage, 200, {
       Contact: `<sip:${this.fakeEmail};transport=ws>`,
       'Content-Type': 'application/sdp'
-    }, localRtcSd.sdp))
+    }, localRtcSd.sdp)
   }
 
-  async reject () {
-
+  async decline (inviteSipMessage) {
+    await this.response(inviteSipMessage, 486)
   }
 }
 

@@ -26,7 +26,7 @@ const rc = new RingCentral({
 
   softphone.on('INVITE', async sipMessage => {
     const inputAudioStream = await mediaDevices.getUserMedia({ audio: true, video: false })
-    softphone.answer(inputAudioStream)
+    softphone.answer(sipMessage, inputAudioStream)
     softphone.on('track', e => {
       const speaker = new Speaker({ channels: 1, bitDepth: 16, sampleRate: 48000, signed: true })
       const readable = new Readable()

@@ -18,15 +18,7 @@ const rc = new RingCentral({
   await softphone.register()
   await rc.logout() // rc is no longer needed
 
-  const audioElement = document.getElementById('audio')
   softphone.on('INVITE', async sipMessage => {
-    softphone.on('track', e => {
-      audioElement.srcObject = e.streams[0]
-      softphone.on('BYE', () => {
-        audioElement.srcObject = null
-      })
-    })
-    const inputAudioStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false })
-    softphone.answer(sipMessage, inputAudioStream)
+    softphone.decline(sipMessage)
   })
 })()

@@ -1,4 +1,5 @@
 import md5 from 'blueimp-md5'
+import uuid from 'uuid/v4'
 
 const generateResponse = (username, password, realm, method, uri, nonce) => {
   const ha1 = md5(username + ':' + realm + ':' + password)
@@ -27,3 +28,5 @@ export const generateProxyAuthorization = (sipInfo, method, targetUser, nonce) =
   const { authorizationId: username, password, domain: realm } = sipInfo
   return `Digest algorithm=MD5, username="${username}", realm="${realm}", nonce="${nonce}", uri="sip:${targetUser}@${realm}", response="${generateResponse(username, password, realm, method, `sip:${targetUser}@${realm}`, nonce)}"`
 }
+
+export const branch = () => 'z9hG4bK' + uuid()
