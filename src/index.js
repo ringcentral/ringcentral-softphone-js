@@ -21,8 +21,8 @@ class Softphone extends EventEmitter {
 
   async handleSipMessage (inboundSipMessage) {
     if (inboundSipMessage.subject.startsWith('INVITE sip:')) { // invite
-      await this.send(new ResponseSipMessage(inboundSipMessage, 100, 'Trying'))
-      await this.send(new ResponseSipMessage(inboundSipMessage, 180, 'Ringing', {
+      await this.send(new ResponseSipMessage(inboundSipMessage, 100))
+      await this.send(new ResponseSipMessage(inboundSipMessage, 180, {
         Contact: `<sip:${this.fakeDomain};transport=ws>`
       }))
       this.inviteSipMessage = inboundSipMessage
@@ -30,7 +30,7 @@ class Softphone extends EventEmitter {
     } else if (inboundSipMessage.subject.startsWith('BYE ')) { // bye
       this.emit('BYE', inboundSipMessage)
     } else if (inboundSipMessage.subject.startsWith('MESSAGE ') && inboundSipMessage.body.includes(' Cmd="7"')) { // take over
-      await this.send(new ResponseSipMessage(inboundSipMessage, 200, 'OK'))
+      await this.send(new ResponseSipMessage(inboundSipMessage, 200))
     }
   }
 
@@ -121,7 +121,7 @@ class Softphone extends EventEmitter {
     }
     const localRtcSd = await peerConnection.createAnswer()
     peerConnection.setLocalDescription(localRtcSd)
-    await this.send(new ResponseSipMessage(this.inviteSipMessage, 200, 'OK', {
+    await this.send(new ResponseSipMessage(this.inviteSipMessage, 200, {
       Contact: `<sip:${this.fakeEmail};transport=ws>`,
       'Content-Type': 'application/sdp'
     }, localRtcSd.sdp))

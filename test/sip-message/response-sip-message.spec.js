@@ -55,7 +55,7 @@ a=candidate:mQ0FXtgcx3Jp54R9 2 UDP 2130706430 104.245.57.182 37217 typ host
 
 describe('ResponseSipMessage', () => {
   test('Trying', async () => {
-    const sipMessage = new ResponseSipMessage(inboundInviteMessage, 100, 'Trying')
+    const sipMessage = new ResponseSipMessage(inboundInviteMessage, 100)
     expect(sipMessage.subject).toBe('SIP/2.0 100 Trying')
     expect(R.dissoc('To', sipMessage.headers)).toEqual({
       'User-Agent': `ringcentral-softphone-js/${version}`,
@@ -69,7 +69,7 @@ describe('ResponseSipMessage', () => {
   })
 
   test('Ringing', async () => {
-    const sipMessage = new ResponseSipMessage(inboundInviteMessage, 180, 'Ringing', {
+    const sipMessage = new ResponseSipMessage(inboundInviteMessage, 180, {
       Contact: '<sip:f00b012e-4b95-45dc-a530-27e04537b158.invalid;transport=ws>'
     })
     expect(sipMessage.subject).toBe('SIP/2.0 180 Ringing')
