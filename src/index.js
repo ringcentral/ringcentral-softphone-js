@@ -162,6 +162,10 @@ class Softphone extends EventEmitter {
   async ignore (inviteSipMessage) {
     await this.response(inviteSipMessage, 480)
   }
+
+  async invite (callee) {
+
+  }
 }
 
 export default Softphone

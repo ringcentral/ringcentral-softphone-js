@@ -39,6 +39,8 @@ cp .env.sample .env
 
 Edit `.env` file to specify credentials.
 
+- `CALLEE_FOR_TESTING` is a phone number to receive testing phone calls. You don't need to specify it if you are not interested to make outbound calls using the demo.
+
 
 ### Run
 
