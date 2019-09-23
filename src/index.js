@@ -7,6 +7,7 @@ import RequestSipMessage from './sip-message/outbound/request-sip-message'
 import InboundSipMessage from './sip-message/inbound/inbound-sip-message'
 import ResponseSipMessage from './sip-message/outbound/response-sip-message'
 import { generateAuthorization, branch } from './utils'
+import RcMessage from './rc-message/rc-message'
 
 class Softphone extends EventEmitter {
   constructor (rc) {
@@ -15,7 +16,7 @@ class Softphone extends EventEmitter {
     this.fakeDomain = uuid() + '.invalid'
     this.fakeEmail = uuid() + '@' + this.fakeDomain
     this.fromTag = uuid()
-    this.callerId = uuid()
+    this.callId = uuid()
   }
 
   async handleSipMessage (inboundSipMessage) {
@@ -23,12 +24,37 @@ class Softphone extends EventEmitter {
       await this.response(inboundSipMessage, 180, {
         Contact: `<sip:${this.fakeDomain};transport=ws>`
       })
+      await this.sendRcMessage(inboundSipMessage, 17)
       this.emit('INVITE', inboundSipMessage)
     } else if (inboundSipMessage.subject.startsWith('BYE ')) { // bye
       this.emit('BYE', inboundSipMessage)
     } else if (inboundSipMessage.subject.startsWith('MESSAGE ') && inboundSipMessage.body.includes(' Cmd="7"')) { // take over
       await this.response(inboundSipMessage, 200)
     }
+  }
+
+  async sendRcMessage (inboundSipMessage, reqid) {
+    const rcMessage = RcMessage.fromXml(inboundSipMessage.headers['P-rc'])
+    const newRcMessage = new RcMessage(
+      {
+        SID: rcMessage.Hdr.SID,
+        Req: rcMessage.Hdr.Req,
+        From: rcMessage.Hdr.To,
+        To: rcMessage.Hdr.From,
+        Cmd: reqid
+      },
+      {
+        Cln: this.sipInfo.authorizationId
+      }
+    )
+    const requestSipMessage = new RequestSipMessage(`MESSAGE sip:${newRcMessage.Hdr.To} SIP/2.0`, {
+      Via: `SIP/2.0/WSS ${this.fakeDomain};branch=${branch()}`,
+      To: `<sip:${newRcMessage.Hdr.To}>`,
+      From: `<sip:${this.sipInfo.username}@${this.sipInfo.domain}>;tag=${this.fromTag}`,
+      'Call-ID': this.callId,
+      'Content-Type': 'x-rc/agent'
+    }, newRcMessage.toXml())
+    await this.send(requestSipMessage)
   }
 
   async send (sipMessage) {
@@ -91,7 +117,7 @@ class Softphone extends EventEmitter {
     const openHandler = async e => {
       this.ws.removeEventListener('open', openHandler)
       const requestSipMessage = new RequestSipMessage(`REGISTER sip:${this.sipInfo.domain} SIP/2.0`, {
-        'Call-ID': this.callerId,
+        'Call-ID': this.callId,
         Contact: `<sip:${this.fakeEmail};transport=ws>;expires=600`,
         From: `<sip:${this.sipInfo.username}@${this.sipInfo.domain}>;tag=${this.fromTag}`,
         To: `<sip:${this.sipInfo.username}@${this.sipInfo.domain}>`,
@@ -128,8 +154,8 @@ class Softphone extends EventEmitter {
     }, localRtcSd.sdp)
   }
 
-  async toVoicemail () {
-    // const requestSipMessage = new RequestSipMessage('')
+  async toVoicemail (inviteSipMessage) {
+    await this.sendRcMessage(inviteSipMessage, 11)
   }
 }
 

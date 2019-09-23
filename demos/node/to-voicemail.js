@@ -18,6 +18,6 @@ const rc = new RingCentral({
   await softphone.register()
   await rc.logout() // rc is no longer needed
   softphone.on('INVITE', async sipMessage => {
-    softphone.toVoicemail()
+    softphone.toVoicemail(sipMessage)
   })
 })()
