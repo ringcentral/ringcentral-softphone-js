@@ -1,4 +1,5 @@
 import RingCentral from '@ringcentral/sdk'
+import mediaDevices from 'node-webrtc-media-devices'
 
 import Softphone from '../../src/index'
 
@@ -17,5 +18,8 @@ const rc = new RingCentral({
   const softphone = new Softphone(rc)
   await softphone.register()
   await rc.logout() // rc is no longer needed
-  softphone.invite(process.env.CALLEE_FOR_TESTING)
+  softphone.on('registered', async () => {
+    const inputAudioStream = await mediaDevices.getUserMedia({ audio: true, video: false })
+    softphone.invite(process.env.CALLEE_FOR_TESTING, inputAudioStream)
+  })
 })()
