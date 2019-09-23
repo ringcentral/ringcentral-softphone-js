@@ -8,7 +8,6 @@
     "browser": "webpack-dev-server --progress --colors --open",
     "test": "standard && jest",
     "release": "babel src --out-dir dist --source-maps",
-    "prepush": "yarn test",
     "prepublishOnly": "yarn release"
   },
   "dependencies": {
@@ -42,5 +41,10 @@
   },
   "peerDependencies": {
     "@ringcentral/sdk": "^4.0.0-alpha.7"
+  },
+  "husky": {
+    "hooks": {
+      "pre-push": "yarn test"
+    }
   }
 }
