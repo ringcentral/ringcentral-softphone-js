@@ -4,7 +4,7 @@
   "license": "MIT",
   "main": "dist/index.js",
   "scripts": {
-    "server": "node -r dotenv-override-true/config -r @babel/register demos/node/answer-and-talk.js",
+    "server": "node -r dotenv-override-true/config -r @babel/register demos/node/to-voicemail.js",
     "browser": "webpack-dev-server --progress --colors --open",
     "test": "standard && jest",
     "release": "babel src --out-dir dist --source-maps",

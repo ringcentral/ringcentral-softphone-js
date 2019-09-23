@@ -128,8 +128,8 @@ class Softphone extends EventEmitter {
     }, localRtcSd.sdp)
   }
 
-  async decline (inviteSipMessage) {
-    await this.response(inviteSipMessage, 486)
+  async toVoicemail () {
+    // const requestSipMessage = new RequestSipMessage('')
   }
 }
 
