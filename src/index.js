@@ -21,7 +21,6 @@ class Softphone extends EventEmitter {
 
   async handleSipMessage (inboundSipMessage) {
     if (inboundSipMessage.subject.startsWith('INVITE sip:')) { // invite
-      await this.send(new ResponseSipMessage(inboundSipMessage, 100))
       await this.send(new ResponseSipMessage(inboundSipMessage, 180, {
         Contact: `<sip:${this.fakeDomain};transport=ws>`
       }))
