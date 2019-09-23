@@ -27,8 +27,9 @@ class Softphone extends EventEmitter {
       await this.sendRcMessage(inboundSipMessage, 17)
       this.emit('INVITE', inboundSipMessage)
     } else if (inboundSipMessage.subject.startsWith('BYE ')) { // bye
+      await this.response(inboundSipMessage, 200)
       this.emit('BYE', inboundSipMessage)
-    } else if (inboundSipMessage.subject.startsWith('MESSAGE ') && inboundSipMessage.body.includes(' Cmd="7"')) { // take over
+    } else if (inboundSipMessage.subject.startsWith('MESSAGE ') && inboundSipMessage.body.includes(' Cmd="7"')) { // server side: already processed
       await this.response(inboundSipMessage, 200)
     }
   }
@@ -156,6 +157,10 @@ class Softphone extends EventEmitter {
 
   async toVoicemail (inviteSipMessage) {
     await this.sendRcMessage(inviteSipMessage, 11)
+  }
+
+  async ignore (inviteSipMessage) {
+    await this.response(inviteSipMessage, 480)
   }
 }
 
