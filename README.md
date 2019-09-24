@@ -4,7 +4,29 @@
 
 [ringcentral-web-phone](https://github.com/ringcentral/ringcentral-web-phone) is designed for client side and only works with browsers.
 
-This project was originally designed for server and desktop. It works both with and without browsers.
+This project was originally designed for server and desktop. It doesn't require a browser to run. It could run in browser too.
+
+
+## Supported features:
+
+- Answer inbound call
+- Make outbound call
+- Speak and listen, two way communication
+- Call control features
+    - Redirect inbound call to voicemail
+    - Ignore inbound call
+
+
+## Demos
+
+- [browser demo](./demos/browser)
+- node.js
+    - [answer inbound call](./demos/node/answer-and-talk.js)
+    - [make outbound call](./demos/node/outbound-call.js)
+    - [redirect inbound call to voicemail](./demos/node/to-voicemail.js)
+    - [ignore inbound call](./demos/node/ignore.js)
+- [call supervise](https://github.com/tylerlong/ringcentral-call-supervise-demo)
+    - supervise an existing phone call and get real time audio stream
 
 
 ## Install
@@ -19,8 +41,6 @@ For node.js you also need to:
 yarn add ws wrtc
 ```
 
-because node.js by default doesn't support WebSocket & WebRTC.
-
 
 ## Usage
 
@@ -28,7 +48,7 @@ because node.js by default doesn't support WebSocket & WebRTC.
 - for browser, check [here](./demos/browser)
 
 
-## Demos
+## Official demos
 
 ### Setup
 
@@ -39,7 +59,7 @@ cp .env.sample .env
 
 Edit `.env` file to specify credentials.
 
-- `CALLEE_FOR_TESTING` is a phone number to receive testing phone calls. You don't need to specify it if you are not interested to make outbound calls using the demo.
+- `CALLEE_FOR_TESTING` is a phone number to receive testing phone calls. You don't need to specify it if you do not make outbound calls.
 
 
 ### Run
@@ -50,10 +70,7 @@ Edit `.env` file to specify credentials.
 
 ### Test
 
-Make a phone call to the phone number you configured in `.env` file.
-
-- for node.js, the app will auto pick up the call and redirect your voice to speaker.
-- for browser, the app will auto pick up the call and redirect your voice to an `<audio/>` HTML5 element.
+Make a phone call to the phone number you configured in `.env` file. The demo app will answer the call and you can speak and listen.
 
 
 ## Interesting Usage cases
@@ -76,9 +93,13 @@ Translate the audio stream into text by invoking some speech-to-text service.
 Show the text to the caller and/or callee so they can see live transcription.
 
 
+## Play recorded audio
+
+You can create a program to make a phone cal or answer a phone call and play recorded audio. This is good for announcement purpose. This is also good for quick voicemail drop.
+
+
 ## Todo
 
-- make outbound call
 - stay alive
 - How to create a publish message
 - How to forward a call
