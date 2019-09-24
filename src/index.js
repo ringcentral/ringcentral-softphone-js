@@ -73,7 +73,9 @@ class Softphone extends EventEmitter {
         if (inboundSipMessage.headers.CSeq !== sipMessage.headers.CSeq) {
           return // message not for this send
         }
-        if (inboundSipMessage.subject === 'SIP/2.0 100 Trying' || inboundSipMessage.subject === 'SIP/2.0 183 Session Progress') {
+        if (inboundSipMessage.subject === 'SIP/2.0 100 Trying' ||
+          inboundSipMessage.subject === 'SIP/2.0 183 Session Progress'
+        ) {
           return // ignore
         }
         this.off('sipMessage', responseHandler)
@@ -129,9 +131,7 @@ class Softphone extends EventEmitter {
         Contact: `<sip:${this.fakeEmail};transport=ws>;expires=600`,
         From: `<sip:${this.sipInfo.username}@${this.sipInfo.domain}>;tag=${this.fromTag}`,
         To: `<sip:${this.sipInfo.username}@${this.sipInfo.domain}>`,
-        Via: `SIP/2.0/WSS ${this.fakeDomain};branch=${branch()}`,
-        Allow: 'ACK,CANCEL,INVITE,MESSAGE,BYE,OPTIONS,INFO,NOTIFY,REFER',
-        Supported: 'path, gruu, outbound'
+        Via: `SIP/2.0/WSS ${this.fakeDomain};branch=${branch()}`
       })
       let inboundSipMessage = await this.send(requestSipMessage)
       const wwwAuth = inboundSipMessage.headers['Www-Authenticate']
@@ -181,20 +181,6 @@ class Softphone extends EventEmitter {
     const peerConnection = new RTCPeerConnection({
       iceServers: [{ urls: 'stun:74.125.194.127:19302' }]
     })
-    /* this is for debugging - start */
-    // const eventNames = [
-    //   'addstream', 'connectionstatechange', 'datachannel', 'icecandidate',
-    //   'iceconnectionstatechange', 'icegatheringstatechange', 'identityresult',
-    //   'negotiationneeded', 'removestream', 'signalingstatechange', 'track'
-    // ]
-    // for (const eventName of eventNames) {
-    //   peerConnection.addEventListener(eventName, e => {
-    //     console.log(`\n****** RTCPeerConnection ${eventName} event - start *****`)
-    //     console.log(e)
-    //     console.log(`****** RTCPeerConnection ${eventName} event - end *****\n`)
-    //   })
-    // }
-    /* this is for debugging - end */
     if (inputAudioStream) {
       const track = inputAudioStream.getAudioTracks()[0]
       peerConnection.addTrack(track, inputAudioStream)
@@ -207,13 +193,7 @@ class Softphone extends EventEmitter {
       From: `<sip:${this.sipInfo.username}@${this.sipInfo.domain}>;tag=${this.fromTag}`,
       'Call-ID': this.callId,
       Contact: `<sip:${this.fakeEmail};transport=ws;ob>`,
-      'Content-Type': 'application/sdp',
-      // 'P-rc-country-id': 1,
-      // 'P-rc-endpoint-id': uuid(),
-      // 'Client-id': process.env.RINGCENTRAL_CLIENT_ID,
-      // 'P-Asserted-Identity': 'sip:+16504223279@sip.ringcentral.com',
-      Allow: 'ACK,CANCEL,INVITE,MESSAGE,BYE,OPTIONS,INFO,NOTIFY,REFER',
-      Supported: 'outbound'
+      'Content-Type': 'application/sdp'
     }, localRtcSd.sdp)
     let inboundSipMessage = await this.send(requestSipMessage)
     const wwwAuth = inboundSipMessage.headers['Proxy-Authenticate']
@@ -222,8 +202,7 @@ class Softphone extends EventEmitter {
         Via: `SIP/2.0/WSS ${this.fakeDomain};branch=${branch()}`,
         To: inboundSipMessage.headers.To,
         From: inboundSipMessage.headers.From,
-        'Call-ID': this.callId,
-        Supported: 'outbound'
+        'Call-ID': this.callId
       })
       ackMessage.reuseCseq()
       this.send(ackMessage)
