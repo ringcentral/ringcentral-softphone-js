@@ -78,24 +78,21 @@ Make a phone call to the phone number you configured in `.env` file. The demo ap
 ### Call supervision
 
 Let's say there is a phone call ongoing between a customer and the call agent.
-
 You can use this library to supervise this phone call to get live audio stream.
-
 You can analyze the audio stream using some AI algorithm and provide tips to the call agent in real time.
 
 
 ### Live transcription
 
 Use this library to supervise an existing phone call to get live audio stream.
-
 Translate the audio stream into text by invoking some speech-to-text service.
-
 Show the text to the caller and/or callee so they can see live transcription.
 
 
 ### Play recorded audio
 
-You can create a program to make a phone cal or answer a phone call and play recorded audio. This is good for announcement purpose. This is also good for quick voicemail drop.
+You can create a program to make a phone cal or answer a phone call and play recorded audio.
+This is good for announcement purpose. This is also good for quick voicemail drop.
 
 
 ## Todo
