@@ -93,13 +93,14 @@ Translate the audio stream into text by invoking some speech-to-text service.
 Show the text to the caller and/or callee so they can see live transcription.
 
 
-## Play recorded audio
+### Play recorded audio
 
 You can create a program to make a phone cal or answer a phone call and play recorded audio. This is good for announcement purpose. This is also good for quick voicemail drop.
 
 
 ## Todo
 
-- stay alive
+- Keep SIP sessoin alive
 - How to create a publish message
 - How to forward a call
+- Multiple inbound call conflicts
