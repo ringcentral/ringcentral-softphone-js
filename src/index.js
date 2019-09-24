@@ -138,9 +138,9 @@ class Softphone extends EventEmitter {
       const wwwAuth = inboundSipMessage.headers['Www-Authenticate']
       if (wwwAuth && wwwAuth.includes(', nonce="')) { // authorization required
         const nonce = wwwAuth.match(/, nonce="(.+?)"/)[1]
-        requestSipMessage.headers.Authorization = generateAuthorization(this.sipInfo, 'REGISTER', nonce)
-        requestSipMessage.newCseq()
-        inboundSipMessage = await this.send(requestSipMessage)
+        const newRequestSipMessage = requestSipMessage.fork()
+        newRequestSipMessage.headers.Authorization = generateAuthorization(this.sipInfo, 'REGISTER', nonce)
+        inboundSipMessage = await this.send(newRequestSipMessage)
         if (inboundSipMessage.subject === 'SIP/2.0 200 OK') {
           this.emit('registered')
         }
@@ -229,10 +229,9 @@ class Softphone extends EventEmitter {
       ackMessage.reuseCseq()
       this.send(ackMessage)
       const nonce = wwwAuth.match(/, nonce="(.+?)"/)[1]
-      requestSipMessage.headers['Proxy-Authorization'] = generateProxyAuthorization(this.sipInfo, 'INVITE', callee, nonce)
-      requestSipMessage.headers.Via = `SIP/2.0/WSS ${this.fakeDomain};branch=${branch()}`
-      requestSipMessage.newCseq()
-      inboundSipMessage = await this.send(requestSipMessage)
+      const newRequestSipMessage = requestSipMessage.fork()
+      newRequestSipMessage.headers['Proxy-Authorization'] = generateProxyAuthorization(this.sipInfo, 'INVITE', callee, nonce)
+      inboundSipMessage = await this.send(newRequestSipMessage)
     }
   }
 }
