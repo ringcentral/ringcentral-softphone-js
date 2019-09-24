@@ -1,4 +1,5 @@
 import uuid from 'uuid/v4'
+import md5 from 'blueimp-md5'
 import WebSocket from 'isomorphic-ws'
 import EventEmitter from 'events'
 import { RTCSessionDescription, RTCPeerConnection } from 'isomorphic-webrtc'
@@ -13,10 +14,14 @@ class Softphone extends EventEmitter {
   constructor (rc) {
     super()
     this.rc = rc
-    this.fakeDomain = uuid() + '.invalid'
-    this.fakeEmail = uuid() + '@' + this.fakeDomain
-    this.fromTag = uuid()
-    this.callId = uuid()
+    this.fakeDomain = md5(uuid()) + '.invalid'
+    this.fakeEmail = md5(uuid()) + '@' + this.fakeDomain
+    this.fromTag = md5(uuid())
+    this.callId = md5(uuid())
+  }
+
+  newCallId () {
+    this.callId = md5(uuid())
   }
 
   async handleSipMessage (inboundSipMessage) {
@@ -125,13 +130,16 @@ class Softphone extends EventEmitter {
         Contact: `<sip:${this.fakeEmail};transport=ws>;expires=600`,
         From: `<sip:${this.sipInfo.username}@${this.sipInfo.domain}>;tag=${this.fromTag}`,
         To: `<sip:${this.sipInfo.username}@${this.sipInfo.domain}>`,
-        Via: `SIP/2.0/WSS ${this.fakeDomain};branch=${branch()}`
+        Via: `SIP/2.0/WSS ${this.fakeDomain};branch=${branch()}`,
+        Allow: 'ACK,CANCEL,INVITE,MESSAGE,BYE,OPTIONS,INFO,NOTIFY,REFER',
+        Supported: 'path, gruu, outbound'
       })
       let inboundSipMessage = await this.send(requestSipMessage)
       const wwwAuth = inboundSipMessage.headers['Www-Authenticate']
       if (wwwAuth && wwwAuth.includes(', nonce="')) { // authorization required
         const nonce = wwwAuth.match(/, nonce="(.+?)"/)[1]
         requestSipMessage.headers.Authorization = generateAuthorization(this.sipInfo, 'REGISTER', nonce)
+        requestSipMessage.newCseq()
         inboundSipMessage = await this.send(requestSipMessage)
         if (inboundSipMessage.subject === 'SIP/2.0 200 OK') {
           this.emit('registered')
@@ -170,7 +178,24 @@ class Softphone extends EventEmitter {
   }
 
   async invite (callee, inputAudioStream = undefined) {
-    const peerConnection = new RTCPeerConnection({ iceServers: [{ urls: 'stun:74.125.194.127:19302' }] })
+    this.newCallId()
+    const peerConnection = new RTCPeerConnection({
+      iceServers: [{ urls: 'stun:74.125.194.127:19302' }]
+    })
+    /* this is for debugging - start */
+    // const eventNames = [
+    //   'addstream', 'connectionstatechange', 'datachannel', 'icecandidate',
+    //   'iceconnectionstatechange', 'icegatheringstatechange', 'identityresult',
+    //   'negotiationneeded', 'removestream', 'signalingstatechange', 'track'
+    // ]
+    // for (const eventName of eventNames) {
+    //   peerConnection.addEventListener(eventName, e => {
+    //     console.log(`\n****** RTCPeerConnection ${eventName} event - start *****`)
+    //     console.log(e)
+    //     console.log(`****** RTCPeerConnection ${eventName} event - end *****\n`)
+    //   })
+    // }
+    /* this is for debugging - end */
     if (inputAudioStream) {
       const track = inputAudioStream.getAudioTracks()[0]
       peerConnection.addTrack(track, inputAudioStream)
@@ -184,10 +209,12 @@ class Softphone extends EventEmitter {
       'Call-ID': this.callId,
       Contact: `<sip:${this.fakeEmail};transport=ws;ob>`,
       'Content-Type': 'application/sdp',
-      'P-rc-country-id': 1,
-      'P-rc-endpoint-id': uuid(),
-      'Client-id': process.env.RINGCENTRAL_CLIENT_ID,
-      'P-Asserted-Identity': 'sip:+16504223279@sip.ringcentral.com'
+      // 'P-rc-country-id': 1,
+      // 'P-rc-endpoint-id': md5(uuid()),
+      // 'Client-id': process.env.RINGCENTRAL_CLIENT_ID,
+      // 'P-Asserted-Identity': 'sip:+16504223279@sip.ringcentral.com',
+      Allow: 'ACK,CANCEL,INVITE,MESSAGE,BYE,OPTIONS,INFO,NOTIFY,REFER',
+      Supported: 'outbound'
     }, localRtcSd.sdp)
     let inboundSipMessage = await this.send(requestSipMessage)
     const wwwAuth = inboundSipMessage.headers['Proxy-Authenticate']
@@ -196,11 +223,15 @@ class Softphone extends EventEmitter {
         Via: `SIP/2.0/WSS ${this.fakeDomain};branch=${branch()}`,
         To: inboundSipMessage.headers.To,
         From: inboundSipMessage.headers.From,
-        'Call-ID': this.callId
+        'Call-ID': this.callId,
+        Supported: 'outbound'
       })
+      ackMessage.reuseCseq()
       this.send(ackMessage)
       const nonce = wwwAuth.match(/, nonce="(.+?)"/)[1]
       requestSipMessage.headers['Proxy-Authorization'] = generateProxyAuthorization(this.sipInfo, 'INVITE', callee, nonce)
+      requestSipMessage.headers.Via = `SIP/2.0/WSS ${this.fakeDomain};branch=${branch()}`
+      requestSipMessage.newCseq()
       inboundSipMessage = await this.send(requestSipMessage)
     }
   }
