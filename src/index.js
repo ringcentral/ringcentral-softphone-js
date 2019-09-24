@@ -73,7 +73,7 @@ class Softphone extends EventEmitter {
         if (inboundSipMessage.headers.CSeq !== sipMessage.headers.CSeq) {
           return // message not for this send
         }
-        if (inboundSipMessage.subject === 'SIP/2.0 100 Trying') {
+        if (inboundSipMessage.subject === 'SIP/2.0 100 Trying' || inboundSipMessage.subject === 'SIP/2.0 183 Session Progress') {
           return // ignore
         }
         this.off('sipMessage', responseHandler)
@@ -231,6 +231,11 @@ class Softphone extends EventEmitter {
       const newRequestSipMessage = requestSipMessage.fork()
       newRequestSipMessage.headers['Proxy-Authorization'] = generateProxyAuthorization(this.sipInfo, 'INVITE', callee, nonce)
       inboundSipMessage = await this.send(newRequestSipMessage)
+      const remoteRtcSd = new RTCSessionDescription({ type: 'answer', sdp: inboundSipMessage.body })
+      peerConnection.addEventListener('track', e => {
+        this.emit('track', e)
+      })
+      peerConnection.setRemoteDescription(remoteRtcSd)
     }
   }
 }
