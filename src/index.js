@@ -1,5 +1,4 @@
 import uuid from 'uuid/v4'
-import md5 from 'blueimp-md5'
 import WebSocket from 'isomorphic-ws'
 import EventEmitter from 'events'
 import { RTCSessionDescription, RTCPeerConnection } from 'isomorphic-webrtc'
@@ -14,14 +13,14 @@ class Softphone extends EventEmitter {
   constructor (rc) {
     super()
     this.rc = rc
-    this.fakeDomain = md5(uuid()) + '.invalid'
-    this.fakeEmail = md5(uuid()) + '@' + this.fakeDomain
-    this.fromTag = md5(uuid())
-    this.callId = md5(uuid())
+    this.fakeDomain = uuid() + '.invalid'
+    this.fakeEmail = uuid() + '@' + this.fakeDomain
+    this.fromTag = uuid()
+    this.callId = uuid()
   }
 
   newCallId () {
-    this.callId = md5(uuid())
+    this.callId = uuid()
   }
 
   async handleSipMessage (inboundSipMessage) {
@@ -210,7 +209,7 @@ class Softphone extends EventEmitter {
       Contact: `<sip:${this.fakeEmail};transport=ws;ob>`,
       'Content-Type': 'application/sdp',
       // 'P-rc-country-id': 1,
-      // 'P-rc-endpoint-id': md5(uuid()),
+      // 'P-rc-endpoint-id': uuid(),
       // 'Client-id': process.env.RINGCENTRAL_CLIENT_ID,
       // 'P-Asserted-Identity': 'sip:+16504223279@sip.ringcentral.com',
       Allow: 'ACK,CANCEL,INVITE,MESSAGE,BYE,OPTIONS,INFO,NOTIFY,REFER',

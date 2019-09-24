@@ -1,10 +1,9 @@
 import uuid from 'uuid/v4'
-import md5 from 'blueimp-md5'
 
 import OutboundSipMessage from './outbound-sip-message'
 import responseCodes from '../response-codes'
 
-const toTag = md5(uuid())
+const toTag = uuid()
 
 class ResponseSipMessage extends OutboundSipMessage {
   constructor (inboundSipMessage, responseCode, headers = {}, body = '') {
