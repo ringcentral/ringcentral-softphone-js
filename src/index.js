@@ -139,7 +139,7 @@ class Softphone extends EventEmitter {
     const sdp = inviteSipMessage.body
     const remoteRtcSd = new RTCSessionDescription({ type: 'offer', sdp })
     const peerConnection = new RTCPeerConnection({ iceServers: [{ urls: 'stun:74.125.194.127:19302' }] })
-    if (process.env.WEB_RTC_DEBUGGING) {
+    if (process.env.WEB_RTC_DEBUGGING === 'true') {
       enableWebRtcDebugging(peerConnection)
     }
     peerConnection.addEventListener('track', e => {
@@ -171,7 +171,7 @@ class Softphone extends EventEmitter {
     const peerConnection = new RTCPeerConnection({
       iceServers: [{ urls: 'stun:74.125.194.127:19302' }]
     })
-    if (process.env.WEB_RTC_DEBUGGING) {
+    if (process.env.WEB_RTC_DEBUGGING === 'true') {
       enableWebRtcDebugging(peerConnection)
     }
     if (inputAudioStream) {
