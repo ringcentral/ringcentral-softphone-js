@@ -74,7 +74,7 @@ Edit `.env` file to specify credentials.
 Make a phone call to the phone number you configured in `.env` file. The demo app will answer the call and you can speak and listen.
 
 
-## Interesting Usage cases
+## Interesting Use cases
 
 ### Call supervision
 
@@ -92,8 +92,9 @@ Show the text to the caller and/or callee so they can see live transcription.
 
 ### Play recorded audio
 
-You can create a program to make a phone cal or answer a phone call and play recorded audio.
+You can create a program to make a phone call or answer a phone call and play recorded audio.
 This is good for announcement purpose. This is also good for quick voicemail drop.
+Or you can use text-to-speech service to read text to the callee.
 
 
 ## Todo
