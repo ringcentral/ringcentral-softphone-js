@@ -3,9 +3,7 @@ import WebSocket from 'isomorphic-ws'
 import EventEmitter from 'events'
 import { RTCSessionDescription, RTCPeerConnection } from 'isomorphic-webrtc'
 
-import RequestSipMessage from './sip-message/outbound/request-sip-message'
-import InboundSipMessage from './sip-message/inbound/inbound-sip-message'
-import ResponseSipMessage from './sip-message/outbound/response-sip-message'
+import { RequestSipMessage, ResponseSipMessage, InboundSipMessage } from './sip-message'
 import { generateAuthorization, generateProxyAuthorization, branch } from './utils'
 import RcMessage from './rc-message/rc-message'
 
