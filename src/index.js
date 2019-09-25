@@ -37,6 +37,9 @@ class Softphone extends EventEmitter {
   }
 
   async sendRcMessage (inboundSipMessage, reqid) {
+    if (!inboundSipMessage.headers['P-rc']) {
+      return
+    }
     const rcMessage = RcMessage.fromXml(inboundSipMessage.headers['P-rc'])
     const newRcMessage = new RcMessage(
       {
