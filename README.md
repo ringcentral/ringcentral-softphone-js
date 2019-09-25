@@ -60,6 +60,7 @@ cp .env.sample .env
 Edit `.env` file to specify credentials.
 
 - `CALLEE_FOR_TESTING` is a phone number to receive testing phone calls. You don't need to specify it if you do not make outbound calls.
+- If you have `WEB_SOCKET_DEBUGGING=true`, then all WebSocket traffic will be printed to console.
 
 
 ### Run

@@ -4,7 +4,7 @@ import EventEmitter from 'events'
 import { RTCSessionDescription, RTCPeerConnection } from 'isomorphic-webrtc'
 
 import { RequestSipMessage, ResponseSipMessage, InboundSipMessage } from './sip-message'
-import { generateAuthorization, generateProxyAuthorization, branch } from './utils'
+import { generateAuthorization, generateProxyAuthorization, branch, enableWebSocketDebugging } from './utils'
 import RcMessage from './rc-message/rc-message'
 
 class Softphone extends EventEmitter {
@@ -103,20 +103,9 @@ class Softphone extends EventEmitter {
     this.device = json.device
     this.sipInfo = json.sipInfo[0]
     this.ws = new WebSocket('wss://' + this.sipInfo.outboundProxy, 'sip', { rejectUnauthorized: false })
-    /* this is for debugging - start */
-    this.ws.addEventListener('message', e => {
-      console.log('\n***** WebSocket Got - start *****')
-      console.log(e.data)
-      console.log('***** WebSocket Got - end *****\n')
-    })
-    const send = this.ws.send.bind(this.ws)
-    this.ws.send = (...args) => {
-      console.log('\n***** WebSocket Send - start *****')
-      console.log(...args)
-      console.log('***** WebSocket Send - end *****\n')
-      send(...args)
+    if (process.env.WEB_SOCKET_DEBUGGING === 'true') {
+      enableWebSocketDebugging(this.ws)
     }
-    /* this is for debugging - end */
     this.ws.addEventListener('message', e => {
       const sipMessage = InboundSipMessage.fromString(e.data)
       this.emit('sipMessage', sipMessage)

@@ -31,3 +31,18 @@ export const generateProxyAuthorization = (sipInfo, method, targetUser, nonce) =
 }
 
 export const branch = () => 'z9hG4bK' + uuid()
+
+export const enableWebSocketDebugging = ws => {
+  ws.addEventListener('message', e => {
+    console.log('\n***** WebSocket Receive - start *****')
+    console.log(e.data)
+    console.log('***** WebSocket Receive - end *****\n')
+  })
+  const send = ws.send.bind(ws)
+  ws.send = (...args) => {
+    console.log('\n***** WebSocket Send - start *****')
+    console.log(...args)
+    console.log('***** WebSocket Send - end *****\n')
+    send(...args)
+  }
+}
