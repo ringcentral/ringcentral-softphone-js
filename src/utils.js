@@ -10,11 +10,11 @@ const generateResponse = (username, password, realm, method, uri, nonce) => {
 
 /*
 Sample input:
-  const username = '802396666666'
-  const password = 'xxxxxx'
-  const realm = 'sip.ringcentral.com'
-  const method = 'REGISTER'
-  const nonce = 'yyyyyy'
+const username = '802396666666'
+const password = 'xxxxxx'
+const realm = 'sip.ringcentral.com'
+const method = 'REGISTER'
+const nonce = 'yyyyyy'
 */
 export const generateAuthorization = (sipInfo, method, nonce) => {
   const { authorizationId: username, password, domain: realm } = sipInfo
@@ -22,6 +22,7 @@ export const generateAuthorization = (sipInfo, method, nonce) => {
 }
 
 /*
+Sample output:
 Proxy-Authorization: Digest algorithm=MD5, username="802396666666", realm="sip.ringcentral.com", nonce="yyyyyyy", uri="sip:+16508888888@sip.ringcentral.com", response="zzzzzzzzz"
 */
 export const generateProxyAuthorization = (sipInfo, method, targetUser, nonce) => {
