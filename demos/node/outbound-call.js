@@ -28,12 +28,12 @@ const rc = new RingCentral({
     audioSink.ondata = data => {
       speaker.write(Buffer.from(data.samples.buffer))
     }
-    softphone.on('BYE', () => {
+    softphone.once('BYE', () => {
       audioSink.stop()
       speaker.close()
     })
   })
-  softphone.on('registered', async () => {
+  softphone.once('registered', async () => {
     const inputAudioStream = await mediaDevices.getUserMedia({ audio: true, video: false })
     softphone.invite(process.env.CALLEE_FOR_TESTING, inputAudioStream)
   })

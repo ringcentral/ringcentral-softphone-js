@@ -5,8 +5,6 @@ import Speaker from 'speaker'
 
 import Softphone from '../../src/index'
 
-const { RTCAudioSink } = nonstandard
-
 const rc = new RingCentral({
   server: process.env.RINGCENTRAL_SERVER_URL,
   clientId: process.env.RINGCENTRAL_CLIENT_ID,
@@ -25,13 +23,13 @@ const rc = new RingCentral({
   softphone.on('INVITE', async sipMessage => {
     const inputAudioStream = await mediaDevices.getUserMedia({ audio: true, video: false })
     softphone.answer(sipMessage, inputAudioStream)
-    softphone.on('track', e => {
+    softphone.once('track', e => {
       const speaker = new Speaker({ channels: 1, bitDepth: 16, sampleRate: 48000, signed: true })
-      const audioSink = new RTCAudioSink(e.track)
+      const audioSink = new nonstandard.RTCAudioSink(e.track)
       audioSink.ondata = data => {
         speaker.write(Buffer.from(data.samples.buffer))
       }
-      softphone.on('BYE', () => {
+      softphone.once('BYE', () => {
         audioSink.stop()
         speaker.close()
       })

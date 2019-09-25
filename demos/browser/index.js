@@ -20,9 +20,9 @@ const rc = new RingCentral({
 
   const audioElement = document.getElementById('audio')
   softphone.on('INVITE', async sipMessage => {
-    softphone.on('track', e => {
+    softphone.once('track', e => {
       audioElement.srcObject = e.streams[0]
-      softphone.on('BYE', () => {
+      softphone.once('BYE', () => {
         audioElement.srcObject = null
       })
     })
