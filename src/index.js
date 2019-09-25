@@ -4,7 +4,7 @@ import EventEmitter from 'events'
 import { RTCSessionDescription, RTCPeerConnection } from 'isomorphic-webrtc'
 
 import { RequestSipMessage, ResponseSipMessage, InboundSipMessage } from './sip-message'
-import { generateAuthorization, generateProxyAuthorization, branch, enableWebSocketDebugging } from './utils'
+import { generateAuthorization, generateProxyAuthorization, branch, enableWebSocketDebugging, enableWebRtcDebugging } from './utils'
 import RcMessage from './rc-message/rc-message'
 
 class Softphone extends EventEmitter {
@@ -139,6 +139,9 @@ class Softphone extends EventEmitter {
     const sdp = inviteSipMessage.body
     const remoteRtcSd = new RTCSessionDescription({ type: 'offer', sdp })
     const peerConnection = new RTCPeerConnection({ iceServers: [{ urls: 'stun:74.125.194.127:19302' }] })
+    if (process.env.WEB_RTC_DEBUGGING) {
+      enableWebRtcDebugging(peerConnection)
+    }
     peerConnection.addEventListener('track', e => {
       this.emit('track', e)
     })
@@ -168,6 +171,9 @@ class Softphone extends EventEmitter {
     const peerConnection = new RTCPeerConnection({
       iceServers: [{ urls: 'stun:74.125.194.127:19302' }]
     })
+    if (process.env.WEB_RTC_DEBUGGING) {
+      enableWebRtcDebugging(peerConnection)
+    }
     if (inputAudioStream) {
       const track = inputAudioStream.getAudioTracks()[0]
       peerConnection.addTrack(track, inputAudioStream)

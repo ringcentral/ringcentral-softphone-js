@@ -46,3 +46,18 @@ export const enableWebSocketDebugging = ws => {
     send(...args)
   }
 }
+
+export const enableWebRtcDebugging = rtcPeerConnection => {
+  const eventNames = [
+    'addstream', 'connectionstatechange', 'datachannel', 'icecandidate',
+    'iceconnectionstatechange', 'icegatheringstatechange', 'identityresult',
+    'negotiationneeded', 'removestream', 'signalingstatechange', 'track'
+  ]
+  for (const eventName of eventNames) {
+    rtcPeerConnection.addEventListener(eventName, (...args) => {
+      console.log(`\n****** RTCPeerConnection "${eventName}" event - start *****`)
+      console.log(...args)
+      console.log(`****** RTCPeerConnection "${eventName}" event - end *****\n`)
+    })
+  }
+}
