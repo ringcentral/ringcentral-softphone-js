@@ -48,6 +48,38 @@ yarn add ws wrtc
 - for browser, check [here](./demos/browser)
 
 
+## Get realtime inbound audio
+
+```js
+import { nonstandard } from 'wrtc'
+
+softphone.once('track', e => {
+  const audioSink = new nonstandard.RTCAudioSink(e.track)
+  audioSink.ondata = data => {
+    // here you have the `data`
+  }
+  softphone.once('BYE', () => {
+    audioSink.stop()
+  })
+})
+```
+
+The data you got via `audioSink.ondata` is of the following structure:
+
+```js
+{
+  samples: Int16Array [ ... ],
+  bitsPerSample: 16,
+  sampleRate: 48000,
+  channelCount: 1,
+  numberOfFrames: 480,
+  type: 'data'
+}
+```
+
+Please note that, you may get different numbers, for example, `sampleRate` you get might be 16000 instead of 48000.
+
+
 ## Official demos
 
 ### Setup
