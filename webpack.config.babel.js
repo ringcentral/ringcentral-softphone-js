@@ -6,6 +6,14 @@ const config = {
   entry: {
     index: './demos/browser/index.js'
   },
+  module: {
+    rules: [
+      {
+        test: /\.js$/,
+        loader: 'babel-loader'
+      }
+    ]
+  },
   plugins: [
     new HtmlWebpackPlugin({
       template: 'demos/browser/index.html'
