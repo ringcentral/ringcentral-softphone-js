@@ -33,8 +33,6 @@ const rc = new RingCentral({
       speaker.close()
     })
   })
-  softphone.once('registered', async () => {
-    const inputAudioStream = await mediaDevices.getUserMedia({ audio: true, video: false })
-    softphone.invite(process.env.CALLEE_FOR_TESTING, inputAudioStream)
-  })
+  const inputAudioStream = await mediaDevices.getUserMedia({ audio: true, video: false })
+  softphone.invite(process.env.CALLEE_FOR_TESTING, inputAudioStream)
 })()
