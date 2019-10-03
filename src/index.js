@@ -28,6 +28,10 @@ class Softphone extends EventEmitter {
       })
       await this.sendRcMessage(inboundSipMessage, 17)
       this.emit('INVITE', inboundSipMessage)
+    } else if (inboundSipMessage.subject.startsWith('CANCEL ')) { // caller cancel
+      await this.response(inboundSipMessage, 200)
+      await this.response(inboundSipMessage, 487, { CSeq: inboundSipMessage.headers.CSeq.replace(/CANCEL/, 'INVITE') })
+      this.emit('CANCEL', inboundSipMessage)
     } else if (inboundSipMessage.subject.startsWith('BYE ')) { // bye
       await this.response(inboundSipMessage, 200)
       this.emit('BYE', inboundSipMessage)
