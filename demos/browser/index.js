@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom'
 import React from 'react'
 
 import Softphone from '../../src/index'
-import store from './store'
+import _store from './store'
 
 const rc = new RingCentral({
   server: process.env.RINGCENTRAL_SERVER_URL,
@@ -21,18 +21,21 @@ let softphone
   softphone = new Softphone(rc)
   await softphone.register()
   await rc.logout() // rc is no longer needed
-  store.ready = true
+  _store.ready = true
 
   const audioElement = document.getElementById('audio')
   softphone.on('INVITE', async sipMessage => {
-    store.busy = true
-    store.ringing = true
-    store.inviteSipMessage = sipMessage
+    _store.ringing = true
+    _store.inviteSipMessage = sipMessage
     softphone.once('track', e => {
       audioElement.srcObject = e.streams[0]
       softphone.once('BYE', () => {
         audioElement.srcObject = null
       })
+    })
+    softphone.once('CANCEL', e => {
+      _store.ringing = false
+      delete _store.inviteSipMessage
     })
   })
 })()
@@ -47,8 +50,8 @@ class App extends Component {
     const store = this.props.store
     return (
       <>
-        <h1>RingCentral Softphone SDK official demo</h1>
-        {store.ready ? (store.busy ? <Calling store={store} /> : <Home />) : <Initializing />}
+        <h1>RingCentral Softphone Demo</h1>
+        {store.ready ? (store.busy ? <Calling store={store} /> : <Home store={store} />) : <Initializing store={store} />}
       </>
     )
   }
@@ -69,6 +72,7 @@ class Home extends Component {
   }
 
   render () {
+    const store = this.props.store
     return (
       <>
         <h2>
@@ -79,6 +83,7 @@ class Home extends Component {
           &nbsp;<input placeholder='16508888888' type='number' onChange={e => this.setState({ calleeNumber: e.target.value })} />
           &nbsp;<button disabled={this.state.calleeNumber === null || this.state.calleeNumber.length < 10} onClick={e => console.log(typeof this.state.calleeNumber)}>Call</button>
         </h2>
+        {store.ringing ? <Ringing /> : ''}
       </>
     )
   }
@@ -86,9 +91,14 @@ class Home extends Component {
 
 class Calling extends Component {
   render () {
-    const store = this.props.store
-    return <div>{store.ringing ? 'Ringing' : 'Call in progress'}</div>
+    return <div>Call in progress</div>
   }
 }
 
-ReactDOM.render(<App store={store} />, document.getElementById('container'))
+class Ringing extends Component {
+  render () {
+    return <h2>Incoming call</h2>
+  }
+}
+
+ReactDOM.render(<App store={_store} />, document.getElementById('container'))
