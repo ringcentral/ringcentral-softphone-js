@@ -129,7 +129,7 @@ class Softphone extends EventEmitter {
           Via: `SIP/2.0/WSS ${this.fakeDomain};branch=${branch()}`
         })
         let inboundSipMessage = await this.send(requestSipMessage)
-        const wwwAuth = inboundSipMessage.headers['Www-Authenticate']
+        const wwwAuth = inboundSipMessage.headers['Www-Authenticate'] || inboundSipMessage.headers['WWW-Authenticate']
         if (wwwAuth && wwwAuth.includes(', nonce="')) { // authorization required
           const nonce = wwwAuth.match(/, nonce="(.+?)"/)[1]
           const newRequestSipMessage = requestSipMessage.fork()
