@@ -4,4 +4,4 @@ node_modules/
 dist/
 *.tiff
 *.wav
-.env.prod
+.env.*
