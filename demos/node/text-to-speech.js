@@ -28,8 +28,8 @@ const rc = new RingCentral({
   inputAudioStream.addTrack(track)
   softphone.invite(process.env.CALLEE_FOR_TESTING, inputAudioStream)
   softphone.on('track', e => {
-    const text = 'Hello Tyler, you need to to give a talk to the AI RTC conference today at 3PM, don\'t forget!'
-    const process = exec(`say -o temp.wav --data-format=LEI16@48000 "${text}"`)
+    const text = 'Hello Tyler, you need to give a talk to the AI RTC conference today at 3PM, don\'t forget!'
+    const process = exec(`say -o temp.wav --data-format=LEI16@48000 "${text + ' ' + text}"`)
     process.on('exit', () => {
       rtcAudioStreamSource.addStream(fs.createReadStream('temp.wav'), 16, 48000, 1)
     })
