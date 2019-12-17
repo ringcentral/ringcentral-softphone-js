@@ -102,6 +102,31 @@ class Softphone extends EventEmitter {
     await this.send(new ResponseSipMessage(inboundSipMessage, responseCode, headers, body))
   }
 
+  async sipRegister (nonce, reqMsg) {
+    let requestSipMessage
+    if (!nonce && !reqMsg) {
+      requestSipMessage = new RequestSipMessage(`REGISTER sip:${this.sipInfo.domain} SIP/2.0`, {
+        'Call-ID': this.callId,
+        Contact: `<sip:${this.fakeEmail};transport=ws>;expires=600`,
+        From: `<sip:${this.sipInfo.username}@${this.sipInfo.domain}>;tag=${this.fromTag}`,
+        To: `<sip:${this.sipInfo.username}@${this.sipInfo.domain}>`,
+        Via: `SIP/2.0/WSS ${this.fakeDomain};branch=${branch()}`
+      })
+    } else {
+      requestSipMessage = reqMsg.fork()
+      requestSipMessage.headers.Authorization = generateAuthorization(this.sipInfo, 'REGISTER', nonce)
+    }
+    const inboundSipMessage = await this.send(requestSipMessage)
+    const wwwAuth = inboundSipMessage.headers['Www-Authenticate'] || inboundSipMessage.headers['WWW-Authenticate']
+    if (wwwAuth && wwwAuth.includes(', nonce="')) { // authorization required
+      const nonce = wwwAuth.match(/, nonce="(.+?)"/)[1]
+      return this.sipRegister(nonce, requestSipMessage)
+    }
+    setTimeout(async () => {
+      await this.sipRegister(nonce, requestSipMessage)
+    }, 50000)
+  }
+
   async register () {
     const r = await this.rc.post('/restapi/v1.0/client-info/sip-provision', {
       sipInfo: [{ transport: 'WSS' }]
@@ -121,26 +146,8 @@ class Softphone extends EventEmitter {
     return new Promise((resolve, reject) => {
       const openHandler = async e => {
         this.ws.removeEventListener('open', openHandler)
-        const requestSipMessage = new RequestSipMessage(`REGISTER sip:${this.sipInfo.domain} SIP/2.0`, {
-          'Call-ID': this.callId,
-          Contact: `<sip:${this.fakeEmail};transport=ws>;expires=600`,
-          From: `<sip:${this.sipInfo.username}@${this.sipInfo.domain}>;tag=${this.fromTag}`,
-          To: `<sip:${this.sipInfo.username}@${this.sipInfo.domain}>`,
-          Via: `SIP/2.0/WSS ${this.fakeDomain};branch=${branch()}`
-        })
-        let inboundSipMessage = await this.send(requestSipMessage)
-        const wwwAuth = inboundSipMessage.headers['Www-Authenticate'] || inboundSipMessage.headers['WWW-Authenticate']
-        if (wwwAuth && wwwAuth.includes(', nonce="')) { // authorization required
-          const nonce = wwwAuth.match(/, nonce="(.+?)"/)[1]
-          const newRequestSipMessage = requestSipMessage.fork()
-          newRequestSipMessage.headers.Authorization = generateAuthorization(this.sipInfo, 'REGISTER', nonce)
-          inboundSipMessage = await this.send(newRequestSipMessage)
-          if (inboundSipMessage.subject === 'SIP/2.0 200 OK') {
-            resolve(inboundSipMessage)
-          }
-        } else {
-          reject(inboundSipMessage)
-        }
+        await this.sipRegister()
+        resolve(true)
       }
       this.ws.addEventListener('open', openHandler)
     })
