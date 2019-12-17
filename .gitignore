@@ -5,3 +5,4 @@ dist/
 *.tiff
 *.wav
 .env.*
+fixed-device-id.js
