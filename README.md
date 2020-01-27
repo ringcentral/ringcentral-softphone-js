@@ -136,24 +136,5 @@ Or you can use text-to-speech service to read text to the callee.
 
 ## Todo
 
-- Keep SIP sessoin alive
 - How to create a publish message
 - How to forward a call
-- Multiple inbound call conflicts
-- Hang up:
-
-```
-BYE sip:+16504306662@104.245.57.183:8083;transport=wss SIP/2.0
-Via: SIP/2.0/WSS lvlnn8gadc4t.invalid;branch=z9hG4bK1073489
-Max-Forwards: 70
-To: <sip:+16504306662@104.245.57.183:8083;transport=wss>;tag=10.13.20.229-5070-28258043d5e447
-From: <sip:17203861294*115@50.237.72.154>;tag=vvaunssuc8
-Call-ID: ed884e8cfc9c4f3882bb8029dc889fa7
-CSeq: 260861000 BYE
-Supported: outbound
-User-Agent: WebPhoneDemo/1.0.0 Macintosh-Intel-Mac-OS-X-10_14_5 RCWEBPHONE/0.7.2
-Content-Length: 0
-```
-
-- ACK message contact header should be in subsequent messages' subjects
-    - need to design the code
