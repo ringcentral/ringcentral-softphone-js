@@ -20,6 +20,7 @@ This project was originally designed for server and desktop. It doesn't require 
 ## Known issues
 
 - It doesn't work with Node.js 12. I only tested it against node 10.
+    - Update: today I tested with Node.js 13.7, it worked like a charm!
 
 
 ## Demos
