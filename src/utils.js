@@ -1,5 +1,5 @@
 import md5 from 'blueimp-md5'
-import uuid from 'uuid/v4'
+import { v4 as uuid } from 'uuid'
 
 const generateResponse = (username, password, realm, method, uri, nonce) => {
   const ha1 = md5(username + ':' + realm + ':' + password)
