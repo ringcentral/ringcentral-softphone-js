@@ -209,7 +209,7 @@ class Softphone extends EventEmitter {
     let inboundSipMessage = await this.send(requestSipMessage)
     const wwwAuth = inboundSipMessage.headers['Proxy-Authenticate']
     if (wwwAuth && wwwAuth.includes(', nonce="')) { // authorization required
-      const ackMessage = new RequestSipMessage(`ACK ${inboundSipMessage.headers.Contact.match(/<(.+?)>/)[1]} SIP/2.0`, {
+      let ackMessage = new RequestSipMessage(`ACK ${inboundSipMessage.headers.Contact.match(/<(.+?)>/)[1]} SIP/2.0`, {
         Via: `SIP/2.0/WSS ${this.fakeDomain};branch=${branch()}`,
         To: inboundSipMessage.headers.To,
         From: inboundSipMessage.headers.From,
@@ -221,6 +221,14 @@ class Softphone extends EventEmitter {
       const newRequestSipMessage = requestSipMessage.fork()
       newRequestSipMessage.headers['Proxy-Authorization'] = generateProxyAuthorization(this.sipInfo, 'INVITE', callee, nonce)
       inboundSipMessage = await this.send(newRequestSipMessage)
+      ackMessage = new RequestSipMessage(`ACK ${inboundSipMessage.headers.Contact.match(/<(.+?)>/)[1]} SIP/2.0`, {
+        Via: `SIP/2.0/WSS ${this.fakeDomain};branch=${branch()}`,
+        To: inboundSipMessage.headers.To,
+        From: inboundSipMessage.headers.From,
+        'Call-ID': this.callId
+      })
+      ackMessage.reuseCseq()
+      this.send(ackMessage)
       const remoteRtcSd = new RTCSessionDescription({ type: 'answer', sdp: inboundSipMessage.body })
       peerConnection.addEventListener('track', e => {
         this.emit('track', e)
