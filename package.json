@@ -8,7 +8,7 @@
     "browser": "webpack-dev-server --progress --colors --open",
     "test": "standard && jest",
     "release": "babel src --out-dir dist --source-maps",
-    "prepublishOnly": "yarn release",
+    "prepublishOnly": "yarn release"
   },
   "dependencies": {
     "blueimp-md5": "^2.18.0",
