@@ -6,3 +6,4 @@ dist/
 *.wav
 .env.*
 fixed-device-id.js
+build/
