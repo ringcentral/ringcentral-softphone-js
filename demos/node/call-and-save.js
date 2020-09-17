@@ -1,8 +1,7 @@
 import RingCentral from '@ringcentral/sdk'
-import { nonstandard } from 'wrtc'
+import { nonstandard, MediaStream } from 'wrtc'
 import fs from 'fs'
 import RTCAudioStreamSource from 'node-webrtc-audio-stream-source'
-import { MediaStream } from 'wrtc'
 
 import Softphone from '../../src/index'
 
