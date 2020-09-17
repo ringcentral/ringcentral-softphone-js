@@ -1,7 +1,8 @@
 import RingCentral from '@ringcentral/sdk'
-import { MediaStream } from 'wrtc'
-import RTCAudioStreamSource from 'node-webrtc-audio-stream-source'
+import { nonstandard } from 'wrtc'
 import fs from 'fs'
+import RTCAudioStreamSource from 'node-webrtc-audio-stream-source'
+import { MediaStream } from 'wrtc'
 
 import Softphone from '../../src/index'
 
@@ -28,6 +29,19 @@ const rc = new RingCentral({
   softphone.invite(process.env.CALLEE_FOR_TESTING, inputAudioStream)
 
   softphone.once('track', e => {
-    rtcAudioStreamSource.addStream(fs.createReadStream('test.wav'), 16, 48000, 1)
+    const audioFilePath = 'audio.raw'
+    if (fs.existsSync(audioFilePath)) {
+      fs.unlinkSync(audioFilePath)
+    }
+    const writeStream = fs.createWriteStream(audioFilePath, { flags: 'a' })
+    const audioSink = new nonstandard.RTCAudioSink(e.track)
+    audioSink.ondata = data => {
+      writeStream.write(Buffer.from(data.samples.buffer))
+    }
+    softphone.once('BYE', () => {
+      audioSink.stop()
+      writeStream.end()
+    })
   })
 })()
+// You can play the saved audio by: play -b 16 -e signed -c 1 -r 48000 audio.raw
