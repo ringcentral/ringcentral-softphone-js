@@ -34,13 +34,13 @@ export const branch = () => 'z9hG4bK' + uuid()
 
 export const enableWebSocketDebugging = ws => {
   ws.addEventListener('message', e => {
-    console.log(`\n***** WebSocket Receive - ${new Date()} *****`)
+    console.log(`\n***** WebSocket Receive - ${new Date()} - ${Date.now()} *****`)
     console.log(e.data)
     console.log('***** WebSocket Receive - end *****\n')
   })
   const send = ws.send.bind(ws)
   ws.send = (...args) => {
-    console.log(`\n***** WebSocket Send - ${new Date()} *****`)
+    console.log(`\n***** WebSocket Send - ${new Date()} - ${Date.now()} *****`)
     console.log(...args)
     console.log('***** WebSocket Send - end *****\n')
     send(...args)
@@ -55,7 +55,7 @@ export const enableWebRtcDebugging = rtcPeerConnection => {
   ]
   for (const eventName of eventNames) {
     rtcPeerConnection.addEventListener(eventName, (...args) => {
-      console.log(`\n****** RTCPeerConnection "${eventName}" event - ${new Date()} *****`)
+      console.log(`\n****** RTCPeerConnection "${eventName}" event - ${new Date()} - ${Date.now()} *****`)
       console.log(...args)
       console.log(`****** RTCPeerConnection "${eventName}" event - end *****\n`)
     })
