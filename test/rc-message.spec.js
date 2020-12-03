@@ -1,5 +1,5 @@
 /* eslint-env jest */
-import RcMessage from '../src/rc-message'
+import RcMessage from '../src/rc-message/rc-message'
 
 describe('RcMessage', () => {
   test('fromXml and toXml', async () => {
