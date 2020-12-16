@@ -1,4 +1,4 @@
-import RingCentral from '@ringcentral/sdk'
+import RingCentral from '@rc-ex/core'
 
 import Softphone from '../../src/index'
 
@@ -9,14 +9,14 @@ const rc = new RingCentral({
 })
 
 ;(async () => {
-  await rc.login({
+  await rc.authorize({
     username: process.env.RINGCENTRAL_USERNAME,
     extension: process.env.RINGCENTRAL_EXTENSION,
     password: process.env.RINGCENTRAL_PASSWORD
   })
   const softphone = new Softphone(rc)
   await softphone.register()
-  await rc.logout() // rc is no longer needed
+  await rc.revoke() // rc is no longer needed
 
   const audioElement = document.getElementById('audio')
   softphone.on('INVITE', async sipMessage => {

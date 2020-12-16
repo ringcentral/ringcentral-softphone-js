@@ -131,7 +131,7 @@ class Softphone extends EventEmitter {
     const r = await this.rc.post('/restapi/v1.0/client-info/sip-provision', {
       sipInfo: [{ transport: 'WSS' }]
     })
-    const json = await r.json()
+    const json = await r.data
     this.device = json.device
     this.sipInfo = json.sipInfo[0]
     this.ws = new WebSocket('wss://' + this.sipInfo.outboundProxy, 'sip', { rejectUnauthorized: false })

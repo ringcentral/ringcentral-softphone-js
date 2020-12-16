@@ -32,7 +32,7 @@ This project was originally designed for server and desktop. It doesn't require 
 ## Install
 
 ```
-yarn add ringcentral-softphone @ringcentral/sdk
+yarn add ringcentral-softphone @rc-ex/core
 ```
 
 For node.js you also need to:
