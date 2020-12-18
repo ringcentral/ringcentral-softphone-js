@@ -9,7 +9,7 @@
   "scripts": {
     "server": "ts-node -r dotenv-override-true/config demos/node/send-audio.ts",
     "browser": "webpack-dev-server --progress --colors --open",
-    "test": "standard && jest",
+    "test": "jest",
     "prepublishOnly": "tsc"
   },
   "dependencies": {
