@@ -4,7 +4,7 @@
     "outDir": "dist",
     "esModuleInterop": true,
     "typeRoots": [
-      "src/customTypings",
+      "src/typings",
       "node_modules/@types"
     ],
     "lib": ["ES2019"],
