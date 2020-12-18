@@ -1,6 +1,6 @@
 import RingCentral from '@rc-ex/core';
 // eslint-disable-next-line node/no-unpublished-import
-import {MediaStream} from 'wrtc';
+import wrtc from 'wrtc';
 // eslint-disable-next-line node/no-unpublished-import
 import RTCAudioStreamSource from 'node-webrtc-audio-stream-source';
 import fs from 'fs';
@@ -25,7 +25,7 @@ const rc = new RingCentral({
 
   const rtcAudioStreamSource = new RTCAudioStreamSource();
   const track = rtcAudioStreamSource.createTrack();
-  const inputAudioStream = new MediaStream();
+  const inputAudioStream = new wrtc.MediaStream();
   inputAudioStream.addTrack(track);
   softphone.invite(process.env.CALLEE_FOR_TESTING!, inputAudioStream);
 
