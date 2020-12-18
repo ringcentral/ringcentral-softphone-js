@@ -15,9 +15,9 @@ const rc = new RingCentral({
 
 (async () => {
   await rc.authorize({
-    username: process.env.RINGCENTRAL_USERNAME,
+    username: process.env.RINGCENTRAL_USERNAME!,
     extension: process.env.RINGCENTRAL_EXTENSION,
-    password: process.env.RINGCENTRAL_PASSWORD,
+    password: process.env.RINGCENTRAL_PASSWORD!,
   });
   const softphone = new Softphone(rc);
   await softphone.register();
@@ -27,9 +27,9 @@ const rc = new RingCentral({
   const track = rtcAudioStreamSource.createTrack();
   const inputAudioStream = new MediaStream();
   inputAudioStream.addTrack(track);
-  softphone.invite(process.env.CALLEE_FOR_TESTING, inputAudioStream);
+  softphone.invite(process.env.CALLEE_FOR_TESTING!, inputAudioStream);
 
-  softphone.once('track', e => {
+  softphone.once('track', (e: any) => {
     rtcAudioStreamSource.addStream(
       fs.createReadStream('test.wav'),
       16,

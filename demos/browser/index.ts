@@ -10,9 +10,9 @@ const rc = new RingCentral({
 
 (async () => {
   await rc.authorize({
-    username: process.env.RINGCENTRAL_USERNAME,
+    username: process.env.RINGCENTRAL_USERNAME!,
     extension: process.env.RINGCENTRAL_EXTENSION,
-    password: process.env.RINGCENTRAL_PASSWORD,
+    password: process.env.RINGCENTRAL_PASSWORD!,
   });
   const softphone = new Softphone(rc);
   await softphone.register();
