@@ -18,8 +18,8 @@ const callControlCommands = {
   ClientReply: 14,
   ClientNotProcessed: 15,
   ClientClosed: 16,
-  ClientReceiveConfirm: 17
-}
+  ClientReceiveConfirm: 17,
+};
 
 export const callActionNames = [
   'callhold',
@@ -28,7 +28,7 @@ export const callActionNames = [
   'callpark',
   'startcallrecord',
   'stopcallrecord',
-  'callflip'
-]
+  'callflip',
+];
 
-export default callControlCommands
+export default callControlCommands;

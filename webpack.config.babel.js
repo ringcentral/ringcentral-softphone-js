@@ -4,13 +4,13 @@ import dotenv from 'dotenv-override-true'
 
 const config = {
   entry: {
-    index: './demos/browser/index.js'
+    index: './demos/browser/index.ts'
   },
   module: {
     rules: [
       {
-        test: /\.js$/,
-        loader: 'babel-loader'
+        test: /\.ts$/,
+        loader: 'ts-loader'
       }
     ]
   },

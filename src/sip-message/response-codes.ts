@@ -1,5 +1,9 @@
 // Ref: https://en.wikipedia.org/wiki/List_of_SIP_response_codes'
-const responseCodes = {
+type ResponseCodes = {
+  [key: number]: string;
+};
+
+const responseCodes: ResponseCodes = {
   100: 'Trying',
   180: 'Ringing',
   181: 'Call is Being Forwarded',
@@ -72,7 +76,7 @@ const responseCodes = {
   603: 'Decline',
   604: 'Does Not Exist Anywhere',
   606: 'Not Acceptable',
-  607: 'Unwanted'
-}
+  607: 'Unwanted',
+};
 
-export default responseCodes
+export default responseCodes;
