@@ -5220,10 +5220,10 @@ node-webrtc-audio-source@^0.3.3:
   dependencies:
     command-exists "^1.2.8"
 
-node-webrtc-audio-stream-source@^0.2.6:
-  version "0.2.6"
-  resolved "https://registry.yarnpkg.com/node-webrtc-audio-stream-source/-/node-webrtc-audio-stream-source-0.2.6.tgz#65fd7f6dcf9f65d72c5d84e753956b799cd61243"
-  integrity sha512-SSaDwnDz9hghB2HYozkekY1gvdKiuHQ3D3pXlaeExjGKZHrBcpNj7OcKGZJx+h2waR3JG53X4GqLPB/uepM3mw==
+node-webrtc-audio-stream-source@^0.3.0:
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/node-webrtc-audio-stream-source/-/node-webrtc-audio-stream-source-0.3.0.tgz#48b360e47e1aaa9bde92f797b010b6a3cdd3b714"
+  integrity sha512-m0DzCsUJJVnzddpH+CVXRABlzj4uue33HT3+hiORcmODY3ATwF6OrcXbUOGKLlbtQlhCoirRSRVGmcoLI/wsng==
 
 node-webrtc-media-devices@^0.1.4:
   version "0.1.4"
