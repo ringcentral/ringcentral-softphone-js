@@ -51,7 +51,7 @@ class Softphone extends EventEmitter.EventEmitter {
       await this.response(inboundSipMessage, 180, {
         Contact: `<sip:${this.fakeDomain};transport=ws>`,
       });
-      await this.sendRcMessage(inboundSipMessage, '17');
+      // await this.sendRcMessage(inboundSipMessage, '17');
       this.emit('INVITE', inboundSipMessage);
     } else if (inboundSipMessage.subject.startsWith('CANCEL ')) {
       // caller cancel
