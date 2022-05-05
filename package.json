@@ -7,7 +7,7 @@
     "node": ">=12"
   },
   "scripts": {
-    "server": "ts-node -r dotenv-override-true/config demos/node/answer-and-save.ts",
+    "server": "ts-node -r dotenv-override-true/config demos/node/send-audio.ts",
     "browser": "webpack-dev-server --progress --colors --open",
     "test": "jest",
     "prepublishOnly": "tsc"
