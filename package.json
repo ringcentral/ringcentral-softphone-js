@@ -41,7 +41,7 @@
     "webpack-cli": "^4.2.0",
     "webpack-dev-server": "^3.11.0",
     "wrtc": "^0.4.6",
-    "ws": "^7.4.1",
+    "ws": "^7.4.6",
     "yarn-upgrade-all": "^0.5.4"
   },
   "peerDependencies": {
