@@ -20,7 +20,7 @@ import {
 } from './utils';
 import RcMessage from './rc-message/rc-message';
 import {SipInfo} from './utils';
-import {SipRegistrationDeviceInfo} from '@rc-ex/core/lib/definitions';
+import SipRegistrationDeviceInfo from '@rc-ex/core/lib/definitions/SipRegistrationDeviceInfo';
 
 class Softphone extends EventEmitter.EventEmitter {
   fakeDomain: string;
@@ -189,12 +189,15 @@ class Softphone extends EventEmitter.EventEmitter {
   }
 
   async register() {
-    const r = await this.rc.post('/restapi/v1.0/client-info/sip-provision', {
-      sipInfo: [{transport: 'WSS'}],
-    });
-    const json = await r.data;
+    const json = await this.rc
+      .restapi()
+      .clientInfo()
+      .sipProvision()
+      .post({
+        sipInfo: [{transport: 'WSS'}],
+      });
     this.device = json.device;
-    this.sipInfo = json.sipInfo[0];
+    this.sipInfo = json.sipInfo![0] as SipInfo;
     this.ws = new WebSocket('wss://' + this.sipInfo!.outboundProxy, 'sip', {
       rejectUnauthorized: false,
     });
@@ -304,9 +307,8 @@ class Softphone extends EventEmitter.EventEmitter {
       this.send(ackMessage);
       const nonce = wwwAuth.match(/, nonce="(.+?)"/)![1];
       const newRequestSipMessage = requestSipMessage.fork();
-      newRequestSipMessage.headers[
-        'Proxy-Authorization'
-      ] = generateProxyAuthorization(this.sipInfo!, 'INVITE', callee, nonce);
+      newRequestSipMessage.headers['Proxy-Authorization'] =
+        generateProxyAuthorization(this.sipInfo!, 'INVITE', callee, nonce);
       inboundSipMessage = await this.send(newRequestSipMessage);
       ackMessage = new RequestSipMessage(
         `ACK ${
