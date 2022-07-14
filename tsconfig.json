@@ -4,10 +4,12 @@
     "outDir": "dist",
     "esModuleInterop": true,
     "typeRoots": [
-      "src/typings",
+      "src/@types",
       "node_modules/@types"
     ],
-    "lib": ["ES2019"],
+    "lib": [
+      "ES2019"
+    ],
     "resolveJsonModule": true
   },
   "include": [
