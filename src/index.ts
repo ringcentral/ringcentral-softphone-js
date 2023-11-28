@@ -1,7 +1,7 @@
 import {v4 as uuid} from 'uuid';
 import WebSocket from 'isomorphic-ws';
 import EventEmitter from 'events';
-import irtc from 'isomorphic-webrtc';
+import * as irtc from 'werift';
 import RingCentral from '@rc-ex/core';
 
 const {RTCSessionDescription, RTCPeerConnection} = irtc;
@@ -224,13 +224,13 @@ class Softphone extends EventEmitter.EventEmitter {
     inputAudioStream: any = undefined
   ) {
     const sdp = inviteSipMessage.body;
-    const remoteRtcSd = new RTCSessionDescription({type: 'offer', sdp});
+    const remoteRtcSd = new RTCSessionDescription(sdp, 'offer');
     const peerConnection = new RTCPeerConnection({
       iceServers: [{urls: 'stun:74.125.194.127:19302'}],
     });
-    if (process.env.WEB_RTC_DEBUGGING === 'true') {
-      enableWebRtcDebugging(peerConnection);
-    }
+    // if (process.env.WEB_RTC_DEBUGGING === 'true') {
+    //   enableWebRtcDebugging(peerConnection);
+    // }
     peerConnection.addEventListener('track', (e: any) => {
       this.emit('track', e);
     });
@@ -265,9 +265,9 @@ class Softphone extends EventEmitter.EventEmitter {
     const peerConnection = new RTCPeerConnection({
       iceServers: [{urls: 'stun:74.125.194.127:19302'}],
     });
-    if (process.env.WEB_RTC_DEBUGGING === 'true') {
-      enableWebRtcDebugging(peerConnection);
-    }
+    // if (process.env.WEB_RTC_DEBUGGING === 'true') {
+    //   enableWebRtcDebugging(peerConnection);
+    // }
     if (inputAudioStream) {
       const track = inputAudioStream!.getAudioTracks()[0];
       peerConnection.addTrack(track, inputAudioStream);
@@ -323,10 +323,10 @@ class Softphone extends EventEmitter.EventEmitter {
       );
       ackMessage.reuseCseq();
       this.send(ackMessage);
-      const remoteRtcSd = new RTCSessionDescription({
-        type: 'answer',
-        sdp: inboundSipMessage!.body,
-      });
+      const remoteRtcSd = new RTCSessionDescription(
+        inboundSipMessage!.body,
+        'answer'
+      );
       peerConnection.addEventListener('track', (e: any) => {
         this.emit('track', e);
       });

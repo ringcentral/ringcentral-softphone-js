@@ -1,7 +1,7 @@
 import RingCentral from '@rc-ex/core';
-// eslint-disable-next-line node/no-unpublished-import
-import wrtc from 'wrtc';
-import fs from 'fs';
+// // eslint-disable-next-line node/no-unpublished-import
+// import wrtc from 'wrtc';
+// import fs from 'fs';
 
 import Softphone from '../../src/index';
 
@@ -23,18 +23,20 @@ const rc = new RingCentral({
   softphone.on('INVITE', async sipMessage => {
     softphone.answer(sipMessage);
     softphone.once('track', e => {
-      const audioFilePath = 'audio.raw';
-      if (fs.existsSync(audioFilePath)) {
-        fs.unlinkSync(audioFilePath);
-      }
-      const writeStream = fs.createWriteStream(audioFilePath, {flags: 'a'});
-      const audioSink = new wrtc.nonstandard.RTCAudioSink(e.track);
-      audioSink.ondata = (data: any) => {
-        writeStream.write(Buffer.from(data.samples.buffer));
-      };
+      console.log('on track');
+      // const audioFilePath = 'audio.raw';
+      // if (fs.existsSync(audioFilePath)) {
+      //   fs.unlinkSync(audioFilePath);
+      // }
+      // const writeStream = fs.createWriteStream(audioFilePath, {flags: 'a'});
+      // const audioSink = new wrtc.nonstandard.RTCAudioSink(e.track);
+      // audioSink.ondata = (data: any) => {
+      //   writeStream.write(Buffer.from(data.samples.buffer));
+      // };
       softphone.once('BYE', () => {
-        audioSink.stop();
-        writeStream.end();
+        console.log('on bye');
+        // audioSink.stop();
+        // writeStream.end();
       });
     });
   });

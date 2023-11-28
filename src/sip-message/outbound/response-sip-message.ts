@@ -15,8 +15,10 @@ class ResponseSipMessage extends OutboundSipMessage {
   ) {
     super(undefined, {...headers}, body);
     this.subject = `SIP/2.0 ${responseCode} ${responseCodes[responseCode]}`;
-    for (const key of ['Via', 'From', 'Call-ID', 'CSeq']) {
-      this.headers[key] = inboundSipMessage.headers[key];
+    for (const key of ['Via', 'From', 'Call-ID', 'Call-Id', 'CSeq']) {
+      if (inboundSipMessage.headers[key]) {
+        this.headers[key] = inboundSipMessage.headers[key];
+      }
     }
     this.headers.To = `${inboundSipMessage.headers.To};tag=${toTag}`;
     this.headers.Supported = 'outbound';
