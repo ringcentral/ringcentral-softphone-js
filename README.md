@@ -1,5 +1,11 @@
 # RingCentral Softphone SDK for JavaScript
 
+
+## Project moved
+
+Please check [RingCentral Softphone SDK for TypeScript](https://github.com/ringcentral/ringcentral-softphone-ts) instead.
+
+
 ## What are the differences between ringcentral-web-phone and this project?
 
 [ringcentral-web-phone](https://github.com/ringcentral/ringcentral-web-phone) is designed for client side and only works with browsers.
