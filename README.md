@@ -1,10 +1,10 @@
-# RingCentral Softphone SDK for JavaScript
-
-
-## Project moved
+# Project moved
 
 Please check [RingCentral Softphone SDK for TypeScript](https://github.com/ringcentral/ringcentral-softphone-ts) instead.
 
+## This repo has been abandoned
+
+## Please use [RingCentral Softphone SDK for TypeScript](https://github.com/ringcentral/ringcentral-softphone-ts) instead
 
 ## What are the differences between ringcentral-web-phone and this project?
 
